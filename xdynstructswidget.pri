@@ -1,7 +1,24 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
-!contains(XCONFIG, allformatwidgets) {
-    XCONFIG += allformatwidgets
+FORMS += \
+    $$PWD/dialogxdynstructs.ui \
+    $$PWD/xdynstructswidget.ui
+
+HEADERS += \
+    $$PWD/dialogxdynstructs.h \
+    $$PWD/xdynstructswidget.h
+
+SOURCES += \
+    $$PWD/dialogxdynstructs.cpp \
+    $$PWD/xdynstructswidget.cpp
+
+!contains(XCONFIG, xdynstructsengine) {
+    XCONFIG += xdynstructsengine
     include($$PWD/../XDynStructsEngine/xdynstructsengine.pri)
+}
+
+!contains(XCONFIG, xhtml) {
+    XCONFIG += xhtml
+    include($$PWD/../Controls/xhtml.pri)
 }
