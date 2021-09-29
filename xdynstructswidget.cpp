@@ -31,6 +31,8 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) :
     g_nOffset=0;
     g_nProcessId=0;
     g_pDevice=0;
+
+    connect(ui->textBrowserStructs,SIGNAL(anchorClicked(const QUrl &)),this,SLOT(onAnchorClicked(const QUrl &)));
 }
 
 void XDynStructsWidget::setData(QIODevice *pDevice, qint64 nOffset)
@@ -80,7 +82,14 @@ void XDynStructsWidget::reload()
         QList<XHtml::TABLECELL> listCells;
         XHtml::TABLECELL cell;
 
-        cell.sText=XBinary::valueToHex(info.listRecords.at(i).nAddress);
+        if(info.listRecords.at(i).nAddress!=-1)
+        {
+            cell.sText=XBinary::valueToHex(info.listRecords.at(i).nAddress);
+        }
+        else
+        {
+            cell.sText="";
+        }
         listCells.append(cell);
 
         if(info.listRecords.at(i).nOffset!=-1)
@@ -99,7 +108,7 @@ void XDynStructsWidget::reload()
         cell.sText=info.listRecords.at(i).sName;
         listCells.append(cell);
 
-        cell.sText=info.listRecords.at(i).sValue;
+        cell.sText=XHtml::makeLink(info.listRecords.at(i).sValue,info.listRecords.at(i).sValueData);
         listCells.append(cell);
 
         cell.sText=info.listRecords.at(i).sComment;
@@ -113,6 +122,13 @@ void XDynStructsWidget::reload()
     QString sHtml=xtml.toString();
 
     ui->textBrowserStructs->setHtml(sHtml);
+
+    // TODO
+}
+
+void XDynStructsWidget::onAnchorClicked(const QUrl &sLink)
+{
+    ui->textBrowserStructs->setHtml(sLink.toString());
 
     // TODO
 }

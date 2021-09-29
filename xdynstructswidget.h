@@ -48,6 +48,7 @@ public:
 
 private slots:
     void reload();
+    void onAnchorClicked(const QUrl &sLink);
 
 private:
     Ui::XDynStructsWidget *ui;
