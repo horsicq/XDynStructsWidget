@@ -36,7 +36,7 @@ class DialogXDynStructs : public QDialog
 public:
     explicit DialogXDynStructs(QWidget *pParent=nullptr);
     void setData(QIODevice *pDevice,qint64 nOffset);
-    void setData(qint64 nProcessId);
+    void setData(qint64 nProcessId,qint64 nAddress);
     ~DialogXDynStructs();
 
 private slots:

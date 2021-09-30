@@ -26,6 +26,8 @@ DialogXDynStructs::DialogXDynStructs(QWidget *pParent) :
     ui(new Ui::DialogXDynStructs)
 {
     ui->setupUi(this);
+
+    setWindowFlags(Qt::Window);
 }
 
 void DialogXDynStructs::setData(QIODevice *pDevice, qint64 nOffset)
@@ -37,9 +39,9 @@ void DialogXDynStructs::setData(QIODevice *pDevice, qint64 nOffset)
     setWindowTitle(sTitle);
 }
 
-void DialogXDynStructs::setData(qint64 nProcessId)
+void DialogXDynStructs::setData(qint64 nProcessId,qint64 nAddress)
 {
-    ui->widgetStructs->setData(nProcessId);
+    ui->widgetStructs->setData(nProcessId,nAddress);
 
     QString sTitle=QString("%1: %2").arg(QString("PID"),QString::number(nProcessId));
 

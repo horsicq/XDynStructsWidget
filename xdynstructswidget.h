@@ -24,6 +24,7 @@
 #include <QWidget>
 #include "xdynstructsengine.h"
 #include "xhtml.h"
+#include "dialoghexview.h"
 
 namespace Ui {
 class XDynStructsWidget;
@@ -40,22 +41,39 @@ class XDynStructsWidget : public QWidget
         TYPE_PROCESS
     };
 
+    struct PAGE
+    {
+        qint64 nAddress;
+        QString sStruct;
+        QString sText;
+    };
+
 public:
     explicit XDynStructsWidget(QWidget *pParent=nullptr);
     void setData(QIODevice *pDevice,qint64 nOffset);
-    void setData(qint64 nProcessId);
+    void setData(qint64 nProcessId,qint64 nAddress);
     ~XDynStructsWidget();
 
 private slots:
-    void reload();
+    bool reload(QString sStruct);
     void onAnchorClicked(const QUrl &sLink);
+    void on_pushButtonReload_clicked();
+    void addPage(PAGE page);
+    PAGE getCurrentPage();
+
+signals:
+    void showHex(qint64 nAddress);
 
 private:
     Ui::XDynStructsWidget *ui;
     TYPE g_type;
     QIODevice *g_pDevice;
     qint64 g_nOffset;
+    qint64 g_nAddress;
     qint64 g_nProcessId;
+    bool g_bAddPageEnable;
+    QList<PAGE> g_listPages;
+    qint32 g_nPageIndex;
 };
 
 #endif // XDYNSTRUCTSWIDGET_H
