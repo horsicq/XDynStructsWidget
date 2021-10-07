@@ -25,12 +25,13 @@
 #include "xdynstructsengine.h"
 #include "xhtml.h"
 #include "dialoghexview.h"
+#include "xshortcutswidget.h"
 
 namespace Ui {
 class XDynStructsWidget;
 }
 
-class XDynStructsWidget : public QWidget
+class XDynStructsWidget : public XShortcutsWidget
 {
     Q_OBJECT
 
@@ -60,6 +61,9 @@ private slots:
     void on_pushButtonReload_clicked();
     void addPage(PAGE page);
     PAGE getCurrentPage();
+
+protected:
+    virtual void registerShortcuts(bool bState);
 
 signals:
     void showHex(qint64 nAddress);

@@ -21,15 +21,14 @@
 #ifndef DIALOGXDYNSTRUCTS_H
 #define DIALOGXDYNSTRUCTS_H
 
-#include <QDialog>
 #include "xdynstructswidget.h"
-#include "xbinary.h" // TODO remove
+#include "xshortcutsdialog.h"
 
 namespace Ui {
 class DialogXDynStructs;
 }
 
-class DialogXDynStructs : public QDialog
+class DialogXDynStructs : public XShortcutsDialog
 {
     Q_OBJECT
 
@@ -37,6 +36,7 @@ public:
     explicit DialogXDynStructs(QWidget *pParent=nullptr);
     void setData(QIODevice *pDevice,qint64 nOffset);
     void setData(qint64 nProcessId,qint64 nAddress);
+    void setShortcuts(XShortcuts *pShortcuts);
     ~DialogXDynStructs();
 
 private slots:

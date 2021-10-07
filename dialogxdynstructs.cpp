@@ -22,7 +22,7 @@
 #include "ui_dialogxdynstructs.h"
 
 DialogXDynStructs::DialogXDynStructs(QWidget *pParent) :
-    QDialog(pParent),
+    XShortcutsDialog(pParent),
     ui(new Ui::DialogXDynStructs)
 {
     ui->setupUi(this);
@@ -46,6 +46,11 @@ void DialogXDynStructs::setData(qint64 nProcessId,qint64 nAddress)
     QString sTitle=QString("%1: %2").arg(QString("PID"),QString::number(nProcessId));
 
     setWindowTitle(sTitle);
+}
+
+void DialogXDynStructs::setShortcuts(XShortcuts *pShortcuts)
+{
+    ui->widgetStructs->setShortcuts(pShortcuts);
 }
 
 DialogXDynStructs::~DialogXDynStructs()

@@ -22,7 +22,7 @@
 #include "ui_xdynstructswidget.h"
 
 XDynStructsWidget::XDynStructsWidget(QWidget *pParent) :
-    QWidget(pParent),
+    XShortcutsWidget(pParent),
     ui(new Ui::XDynStructsWidget)
 {
     ui->setupUi(this);
@@ -276,4 +276,9 @@ XDynStructsWidget::PAGE XDynStructsWidget::getCurrentPage()
     }
 
     return result;
+}
+
+void XDynStructsWidget::registerShortcuts(bool bState)
+{
+    // TODO
 }
