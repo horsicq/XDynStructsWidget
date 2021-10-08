@@ -34,8 +34,7 @@ class DialogXDynStructs : public XShortcutsDialog
 
 public:
     explicit DialogXDynStructs(QWidget *pParent=nullptr);
-    void setData(QIODevice *pDevice,qint64 nOffset);
-    void setData(qint64 nProcessId,qint64 nAddress);
+    void setData(XDynStructsEngine::OPTIONS options);
     void setShortcuts(XShortcuts *pShortcuts);
     ~DialogXDynStructs();
 

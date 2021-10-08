@@ -35,13 +35,6 @@ class XDynStructsWidget : public XShortcutsWidget
 {
     Q_OBJECT
 
-    enum TYPE
-    {
-        TYPE_UNKNOWN=0,
-        TYPE_OFFSET,
-        TYPE_PROCESS
-    };
-
     struct PAGE
     {
         qint64 nAddress;
@@ -51,16 +44,15 @@ class XDynStructsWidget : public XShortcutsWidget
 
 public:
     explicit XDynStructsWidget(QWidget *pParent=nullptr);
-    void setData(QIODevice *pDevice,qint64 nOffset);
-    void setData(qint64 nProcessId,qint64 nAddress);
+    void setData(XDynStructsEngine::OPTIONS options);
     ~XDynStructsWidget();
 
 private slots:
     bool reload(QString sStruct);
     void onAnchorClicked(const QUrl &sLink);
     void on_pushButtonReload_clicked();
-    void addPage(PAGE page);
-    PAGE getCurrentPage();
+    void addPage(XDynStructsWidget::PAGE page);
+    XDynStructsWidget::PAGE getCurrentPage();
 
 protected:
     virtual void registerShortcuts(bool bState);
@@ -70,14 +62,10 @@ signals:
 
 private:
     Ui::XDynStructsWidget *ui;
-    TYPE g_type;
-    QIODevice *g_pDevice;
-    qint64 g_nOffset;
-    qint64 g_nAddress;
-    qint64 g_nProcessId;
     bool g_bAddPageEnable;
     QList<PAGE> g_listPages;
     qint32 g_nPageIndex;
+    XDynStructsEngine g_structEngine;
 };
 
 #endif // XDYNSTRUCTSWIDGET_H

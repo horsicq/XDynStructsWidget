@@ -27,34 +27,18 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) :
 {
     ui->setupUi(this);
 
-    g_type=TYPE_UNKNOWN;
-    g_nOffset=0;
-    g_nAddress=0;
-    g_nProcessId=0;
-    g_pDevice=0;
     g_nPageIndex=0;
     g_bAddPageEnable=true;
 
-    connect(ui->textBrowserStructs,SIGNAL(anchorClicked(const QUrl &)),this,SLOT(onAnchorClicked(const QUrl &)));
+    connect(ui->textBrowserStructs,SIGNAL(anchorClicked(QUrl)),this,SLOT(onAnchorClicked(QUrl)));
 }
 
-void XDynStructsWidget::setData(QIODevice *pDevice, qint64 nOffset)
+void XDynStructsWidget::setData(XDynStructsEngine::OPTIONS options)
 {
-    g_pDevice=pDevice;
-    g_nOffset=nOffset;
-    g_type=TYPE_OFFSET;
+    g_structEngine.setData(options);
 
-    ui->lineEditAddress->setValueOS(nOffset);
-    reload("");
-}
+    ui->lineEditAddress->setValueOS(options.nAddress);
 
-void XDynStructsWidget::setData(qint64 nProcessId, qint64 nAddress)
-{
-    g_nProcessId=nProcessId;
-    g_nAddress=nAddress;
-    g_type=TYPE_PROCESS;
-
-    ui->lineEditAddress->setValueOS(nAddress);
     reload("");
 }
 
@@ -68,8 +52,8 @@ bool XDynStructsWidget::reload(QString sStruct)
     bool bResult=true;
 
     qint64 nAddress=ui->lineEditAddress->getValue();
+    XDynStructsEngine::OPTIONS options=g_structEngine.getOptions();
 
-    XDynStructsEngine structEngine;
     XDynStructsEngine::INFO info={};
 
     // TODO get struct name from combobox
@@ -92,13 +76,13 @@ bool XDynStructsWidget::reload(QString sStruct)
 
     if(bResult)
     {
-        if(g_type==TYPE_PROCESS)
+        if(options.nProcessId)
         {
-            info=structEngine.getInfo(g_nProcessId,nAddress,sStruct);
+            info=g_structEngine.getInfo(options.nProcessId,nAddress,sStruct);
         }
-        else if(g_type==TYPE_OFFSET)
+        else if(options.pDevice)
         {
-            info=structEngine.getInfo(g_pDevice,g_nOffset,sStruct);
+            info=g_structEngine.getInfo(options.pDevice,nAddress,sStruct);
         }
 
         bResult=info.listRecords.count();
@@ -176,7 +160,7 @@ bool XDynStructsWidget::reload(QString sStruct)
 
         bool bSuccess=false;
 
-        void *pProcess=XProcess::openProcess(g_nProcessId);
+        void *pProcess=XProcess::openProcess(options.nProcessId);
 
         if(pProcess)
         {
@@ -190,11 +174,11 @@ bool XDynStructsWidget::reload(QString sStruct)
                 {
                     DialogHexView dialogHexView(this);
 
-                    XHexView::OPTIONS options={};
-                    options.sTitle=QString("%1: %2").arg(QString("PID"),QString::number(g_nProcessId));
-                    options.nStartAddress=memoryRegion.nAddress;
+                    XHexView::OPTIONS hexOptions={};
+                    hexOptions.sTitle=QString("%1: %2").arg(QString("PID"),QString::number(options.nProcessId));
+                    hexOptions.nStartAddress=memoryRegion.nAddress;
 
-                    dialogHexView.setData(&processDevice,options);
+                    dialogHexView.setData(&processDevice,hexOptions);
 
                     dialogHexView.exec();
 
@@ -280,5 +264,6 @@ XDynStructsWidget::PAGE XDynStructsWidget::getCurrentPage()
 
 void XDynStructsWidget::registerShortcuts(bool bState)
 {
+    Q_UNUSED(bState)
     // TODO
 }
