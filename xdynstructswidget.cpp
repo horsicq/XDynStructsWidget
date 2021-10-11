@@ -33,11 +33,22 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) :
     connect(ui->textBrowserStructs,SIGNAL(anchorClicked(QUrl)),this,SLOT(onAnchorClicked(QUrl)));
 }
 
-void XDynStructsWidget::setData(XDynStructsEngine::OPTIONS options)
+void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine, qint64 nAddress)
 {
-    g_structEngine.setData(options);
+    g_pStructsEngine=pStructsEngine;
 
-    ui->lineEditAddress->setValueOS(options.nAddress);
+    ui->comboBoxStructsCurrent->addItem("","");
+
+    QList<XDynStructsEngine::DYNSTRUCT> *pListStructs=pStructsEngine->getStructs();
+
+    int nNumberOfStructs=pListStructs->count();
+
+    for(int i=0;i<nNumberOfStructs;i++)
+    {
+        ui->comboBoxStructsCurrent->addItem(pListStructs->at(i).sName,pListStructs->at(i).sName);
+    }
+
+    ui->lineEditStructsCurrentAddress->setValueOS(nAddress);
 
     reload("");
 }
@@ -47,45 +58,20 @@ XDynStructsWidget::~XDynStructsWidget()
     delete ui;
 }
 
-bool XDynStructsWidget::reload(QString sStruct)
+bool XDynStructsWidget::reload(QString sStructName)
 {
     bool bResult=true;
 
-    qint64 nAddress=ui->lineEditAddress->getValue();
-    XDynStructsEngine::OPTIONS options=g_structEngine.getOptions();
+    qint64 nAddress=ui->lineEditStructsCurrentAddress->getValue();
+
+    bResult=adjustComboBox(sStructName);
 
     XDynStructsEngine::INFO info={};
 
-    // TODO get struct name from combobox
-    if(sStruct!="")
-    {
-        bResult=false;
-
-        int nNumberOfRecords=ui->comboBoxStruct->count();
-
-        for(int i=0;i<nNumberOfRecords;i++)
-        {
-            if(ui->comboBoxStruct->itemData(i).toString()==sStruct)
-            {
-                bResult=true;
-
-                break;
-            }
-        }
-    }
-
     if(bResult)
     {
-        if(options.nProcessId)
-        {
-            info=g_structEngine.getInfo(options.nProcessId,nAddress,sStruct);
-        }
-        else if(options.pDevice)
-        {
-            info=g_structEngine.getInfo(options.pDevice,nAddress,sStruct);
-        }
-
-        bResult=info.listRecords.count();
+        info=g_pStructsEngine->getInfo(nAddress,sStructName);
+        bResult=info.bIsValid;
     }
 
     if(bResult)
@@ -145,57 +131,23 @@ bool XDynStructsWidget::reload(QString sStruct)
         PAGE page={};
 
         page.nAddress=nAddress;
-        page.sStruct=sStruct;
+        page.sStructName=sStructName;
         page.sText=sHtml;
 
         addPage(page);
     }
     else
     {
-        PAGE currentPage=getCurrentPage();
-
-        ui->lineEditAddress->setValueOS(currentPage.nAddress);
-        // TODO setComboBox
-        ui->textBrowserStructs->setHtml(currentPage.sText);
-
-        bool bSuccess=false;
-
-        void *pProcess=XProcess::openProcess(options.nProcessId);
-
-        if(pProcess)
+        // TODO pDevice
+        if(g_pStructsEngine->getProcessId())
         {
-            XProcess::MEMORY_REGION memoryRegion=XProcess::getMemoryRegion(pProcess,nAddress);
+            restorePage();
 
-            if(memoryRegion.nSize)
-            {
-                XProcessDevice processDevice;
-
-                if(processDevice.openHandle(pProcess,memoryRegion.nAddress,memoryRegion.nSize,QIODevice::ReadOnly))
-                {
-                    DialogHexView dialogHexView(this);
-
-                    XHexView::OPTIONS hexOptions={};
-                    hexOptions.sTitle=QString("%1: %2").arg(QString("PID"),QString::number(options.nProcessId));
-                    hexOptions.nStartAddress=memoryRegion.nAddress;
-
-                    dialogHexView.setData(&processDevice,hexOptions);
-
-                    dialogHexView.exec();
-
-                    bSuccess=true;
-
-                    processDevice.close();
-                }
-            }
-
-            XProcess::closeProcess(pProcess);
-        }
-
-        if(!bSuccess)
-        {
-            QMessageBox::critical(XOptions::getMainWidget(this),tr("Error"),QString("%1: %2").arg(tr("Cannot read memory at address"),XBinary::valueToHexOS(nAddress)));
+            showViewer(nAddress,VT_HEX);
         }
     }
+
+    adjustPagesStatus();
 
     return bResult;
 }
@@ -205,23 +157,23 @@ void XDynStructsWidget::onAnchorClicked(const QUrl &sLink)
     qint64 nAddress=sLink.toString().section("&",0,0).toLongLong(0,16);
     QString sStruct=sLink.toString().section("&",1,1);
 
-    ui->lineEditAddress->setValueOS(nAddress);
+    ui->lineEditStructsCurrentAddress->setValueOS(nAddress);
 
     reload(sStruct);
 }
 
-void XDynStructsWidget::on_pushButtonReload_clicked()
+void XDynStructsWidget::on_pushButtonStructsReload_clicked()
 {
     g_bAddPageEnable=false;
-    reload(ui->comboBoxStruct->currentData().toString());
+    reload(ui->comboBoxStructsCurrent->currentData().toString());
     g_bAddPageEnable=true;
 
     int nPageCount=g_listPages.count();
 
     if(nPageCount&&(g_nPageIndex<nPageCount))
     {
-        g_listPages[g_nPageIndex].nAddress=ui->lineEditAddress->getValue();
-        g_listPages[g_nPageIndex].sStruct=ui->comboBoxStruct->currentData().toString();
+        g_listPages[g_nPageIndex].nAddress=ui->lineEditStructsCurrentAddress->getValue();
+        g_listPages[g_nPageIndex].sStructName=ui->comboBoxStructsCurrent->currentData().toString();
         g_listPages[g_nPageIndex].sText=ui->textBrowserStructs->toHtml();
     }
 }
@@ -266,4 +218,121 @@ void XDynStructsWidget::registerShortcuts(bool bState)
 {
     Q_UNUSED(bState)
     // TODO
+}
+
+void XDynStructsWidget::on_pushButtonStructsBack_clicked()
+{
+    if(g_nPageIndex>0)
+    {
+        g_nPageIndex--;
+        restorePage();
+    }
+
+    adjustPagesStatus();
+}
+
+void XDynStructsWidget::on_pushButtonStructsForward_clicked()
+{
+    if(g_nPageIndex<(g_listPages.count()-1))
+    {
+        g_nPageIndex++;
+        restorePage();
+    }
+
+    adjustPagesStatus();
+}
+
+void XDynStructsWidget::adjustPagesStatus()
+{
+    ui->pushButtonStructsBack->setEnabled(g_nPageIndex>0);
+    ui->pushButtonStructsForward->setEnabled(g_nPageIndex<(g_listPages.count()-1));
+}
+
+bool XDynStructsWidget::adjustComboBox(QString sStructName)
+{
+    bool bResult=false;
+
+    int nNumberOfRecords=ui->comboBoxStructsCurrent->count();
+
+    if(sStructName!="")
+    {
+        bResult=false;
+
+        for(int i=0;i<nNumberOfRecords;i++)
+        {
+            if(ui->comboBoxStructsCurrent->itemData(i).toString()==sStructName)
+            {
+                ui->comboBoxStructsCurrent->setCurrentIndex(i);
+
+                bResult=true;
+
+                break;
+            }
+        }
+    }
+    else
+    {
+        if(nNumberOfRecords)
+        {
+            ui->comboBoxStructsCurrent->setCurrentIndex(0);
+        }
+
+        bResult=true;
+    }
+
+    return bResult;
+}
+
+void XDynStructsWidget::restorePage()
+{
+    PAGE currentPage=getCurrentPage();
+
+    ui->lineEditStructsCurrentAddress->setValueOS(currentPage.nAddress);
+    adjustComboBox(currentPage.sStructName);
+    ui->textBrowserStructs->setHtml(currentPage.sText);
+}
+
+void XDynStructsWidget::showViewer(qint64 nAddress, VT vt)
+{
+    bool bSuccess=false;
+
+    void *pProcess=XProcess::openProcess(g_pStructsEngine->getProcessId());
+
+    if(pProcess)
+    {
+        XProcess::MEMORY_REGION memoryRegion=XProcess::getMemoryRegion(pProcess,nAddress);
+
+        if(memoryRegion.nSize)
+        {
+            XProcessDevice processDevice;
+
+            if(processDevice.openHandle(pProcess,memoryRegion.nAddress,memoryRegion.nSize,QIODevice::ReadOnly))
+            {
+                DialogHexView dialogHexView(this);
+
+                if(vt==VT_HEX)
+                {
+                    XHexView::OPTIONS hexOptions={};
+                    hexOptions.sTitle=QString("%1: %2").arg(QString("PID"),QString::number(g_pStructsEngine->getProcessId()));
+                    hexOptions.nStartAddress=memoryRegion.nAddress;
+
+                    dialogHexView.setData(&processDevice,hexOptions);
+
+                    dialogHexView.exec();
+
+                    bSuccess=true;
+
+                    processDevice.close();
+                }
+                // TODO Disasm
+            }
+        }
+
+        XProcess::closeProcess(pProcess);
+    }
+
+    if(!bSuccess)
+    {
+        QMessageBox::critical(XOptions::getMainWidget(this),tr("Error"),QString("%1: %2").arg(tr("Cannot read memory at address"),XBinary::valueToHexOS(nAddress)));
+    }
 }

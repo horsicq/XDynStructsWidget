@@ -38,21 +38,33 @@ class XDynStructsWidget : public XShortcutsWidget
     struct PAGE
     {
         qint64 nAddress;
-        QString sStruct;
+        QString sStructName;
         QString sText;
+    };
+
+    enum VT
+    {
+        VT_HEX=0,
+        VT_DISASM
     };
 
 public:
     explicit XDynStructsWidget(QWidget *pParent=nullptr);
-    void setData(XDynStructsEngine::OPTIONS options);
+    void setData(XDynStructsEngine *pStructsEngine, qint64 nAddress);
     ~XDynStructsWidget();
 
 private slots:
     bool reload(QString sStruct);
     void onAnchorClicked(const QUrl &sLink);
-    void on_pushButtonReload_clicked();
+    void on_pushButtonStructsReload_clicked();
     void addPage(XDynStructsWidget::PAGE page);
     XDynStructsWidget::PAGE getCurrentPage();
+    void on_pushButtonStructsBack_clicked();
+    void on_pushButtonStructsForward_clicked();
+    void adjustPagesStatus();
+    bool adjustComboBox(QString sStructName);
+    void restorePage();
+    void showViewer(qint64 nAddress,VT vt);
 
 protected:
     virtual void registerShortcuts(bool bState);
@@ -65,7 +77,7 @@ private:
     bool g_bAddPageEnable;
     QList<PAGE> g_listPages;
     qint32 g_nPageIndex;
-    XDynStructsEngine g_structEngine;
+    XDynStructsEngine *g_pStructsEngine;
 };
 
 #endif // XDYNSTRUCTSWIDGET_H

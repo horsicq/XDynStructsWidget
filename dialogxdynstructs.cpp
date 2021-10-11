@@ -30,19 +30,19 @@ DialogXDynStructs::DialogXDynStructs(QWidget *pParent) :
     setWindowFlags(Qt::Window);
 }
 
-void DialogXDynStructs::setData(XDynStructsEngine::OPTIONS options)
+void DialogXDynStructs::setData(XDynStructsEngine *pStructEngine, qint64 nAddress)
 {
-    ui->widgetStructs->setData(options);
+    ui->widgetStructs->setData(pStructEngine,nAddress);
 
     QString sTitle;
 
-    if(options.pDevice)
+    if(pStructEngine->getDevice())
     {
-        sTitle=XBinary::getDeviceFileName(options.pDevice);
+        sTitle=XBinary::getDeviceFileName(pStructEngine->getDevice());
     }
-    else if(options.nProcessId)
+    else if(pStructEngine->getProcessId())
     {
-        sTitle=QString("%1: %2").arg(QString("PID"),QString::number(options.nProcessId));
+        sTitle=QString("%1: %2").arg(QString("PID"),QString::number(pStructEngine->getProcessId()));
     }
 
     setWindowTitle(sTitle);
