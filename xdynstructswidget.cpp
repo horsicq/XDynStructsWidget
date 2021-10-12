@@ -302,11 +302,13 @@ void XDynStructsWidget::showViewer(qint64 nAddress, VT vt)
     {
         XProcess::MEMORY_REGION memoryRegion=XProcess::getMemoryRegion(pProcess,nAddress);
 
+        XProcess::closeProcess(pProcess);
+
         if(memoryRegion.nSize)
         {
             XProcessDevice processDevice;
 
-            if(processDevice.openHandle(pProcess,memoryRegion.nAddress,memoryRegion.nSize,QIODevice::ReadOnly))
+            if(processDevice.openPID(g_pStructsEngine->getProcessId(),memoryRegion.nAddress,memoryRegion.nSize,QIODevice::ReadOnly))
             {
                 DialogHexView dialogHexView(this);
 
@@ -327,8 +329,6 @@ void XDynStructsWidget::showViewer(qint64 nAddress, VT vt)
                 // TODO Disasm
             }
         }
-
-        XProcess::closeProcess(pProcess);
     }
 
     if(!bSuccess)
