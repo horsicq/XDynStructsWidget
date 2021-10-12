@@ -25,6 +25,8 @@
 #include "xdynstructsengine.h"
 #include "xhtml.h"
 #include "dialoghexview.h"
+#include "dialogmultidisasm.h"
+#include "dialogtextinfo.h"
 #include "xshortcutswidget.h"
 
 namespace Ui {
@@ -42,10 +44,10 @@ class XDynStructsWidget : public XShortcutsWidget
         QString sText;
     };
 
-    enum VT
+    enum VIEWTYPE
     {
-        VT_HEX=0,
-        VT_DISASM
+        VIEWTYPE_HEX=0,
+        VIEWTYPE_DISASM
     };
 
 public:
@@ -61,10 +63,15 @@ private slots:
     XDynStructsWidget::PAGE getCurrentPage();
     void on_pushButtonStructsBack_clicked();
     void on_pushButtonStructsForward_clicked();
-    void adjustPagesStatus();
+    void adjusStatus();
     bool adjustComboBox(QString sStructName);
     void restorePage();
-    void showViewer(qint64 nAddress,VT vt);
+    void showViewer(qint64 nAddress,XDynStructsWidget::VIEWTYPE viewType);
+    void on_pushButtonStructsHex_clicked();
+    void on_pushButtonStructsDisasm_clicked();
+    void on_pushButtonStructsSave_clicked();
+    void on_comboBoxStructsCurrent_currentIndexChanged(int nIndex);
+    void on_pushButtonStructsPrototype_clicked();
 
 protected:
     virtual void registerShortcuts(bool bState);

@@ -30,6 +30,8 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) :
     g_nPageIndex=0;
     g_bAddPageEnable=true;
 
+//    XOptions::setMonoFont(ui->textBrowserStructs);
+
     connect(ui->textBrowserStructs,SIGNAL(anchorClicked(QUrl)),this,SLOT(onAnchorClicked(QUrl)));
 }
 
@@ -85,39 +87,66 @@ bool XDynStructsWidget::reload(QString sStructName)
         for(int i=0;i<nNumberOfRecords;i++)
         {
             QList<XHtml::TABLECELL> listCells;
-            XHtml::TABLECELL cell;
+
+            XHtml::TABLECELL cellAddress={};
 
             if(info.listRecords.at(i).nAddress!=-1)
             {
-                cell.sText=XBinary::valueToHex(info.listRecords.at(i).nAddress);
+                cellAddress.sText=XBinary::valueToHex(info.listRecords.at(i).nAddress);
             }
             else
             {
-                cell.sText="";
+                cellAddress.sText="";
             }
-            listCells.append(cell);
+            listCells.append(cellAddress);
+
+            XHtml::TABLECELL cellOffset={};
 
             if(info.listRecords.at(i).nOffset!=-1)
             {
-                cell.sText=XBinary::valueToHex(info.listRecords.at(i).nOffset);
+                cellOffset.sText=XBinary::valueToHex(info.listRecords.at(i).nOffset);
             }
             else
             {
-                cell.sText="";
+                cellOffset.sText="";
             }
-            listCells.append(cell);
+            listCells.append(cellOffset);
 
-            cell.sText=info.listRecords.at(i).sType;
-            listCells.append(cell);
+            XHtml::TABLECELL cellType={};
+            cellType.sText=info.listRecords.at(i).sType;
+            listCells.append(cellType);
 
-            cell.sText=info.listRecords.at(i).sName;
-            listCells.append(cell);
+            XHtml::TABLECELL cellName={};
+            cellName.sText=info.listRecords.at(i).sName;
+            listCells.append(cellName);
 
-            cell.sText=XHtml::makeLink(info.listRecords.at(i).sValue,info.listRecords.at(i).sValueData);
-            listCells.append(cell);
+            XHtml::TABLECELL cellValue={};
 
-            cell.sText=info.listRecords.at(i).sComment;
-            listCells.append(cell);
+            qint32 nValueSize=info.listRecords.at(i).sValue.size();
+
+            if((nValueSize==4)&&(info.listRecords.at(i).sValue!="0x00"))
+            {
+                cellValue.bBold=true;
+            }
+            else if((nValueSize==6)&&(info.listRecords.at(i).sValue!="0x0000"))
+            {
+                cellValue.bBold=true;
+            }
+            else if((nValueSize==10)&&(info.listRecords.at(i).sValue!="0x00000000"))
+            {
+                cellValue.bBold=true;
+            }
+            else if((nValueSize==18)&&(info.listRecords.at(i).sValue!="0x0000000000000000"))
+            {
+                cellValue.bBold=true;
+            }
+
+            cellValue.sText=XHtml::makeLink(info.listRecords.at(i).sValue,info.listRecords.at(i).sValueData);
+            listCells.append(cellValue);
+
+            XHtml::TABLECELL cellComment={};
+            cellComment.sText=info.listRecords.at(i).sComment;
+            listCells.append(cellComment);
 
             xtml.addTableRow(listCells);
         }
@@ -143,18 +172,18 @@ bool XDynStructsWidget::reload(QString sStructName)
         {
             restorePage();
 
-            showViewer(nAddress,VT_HEX);
+            showViewer(nAddress,VIEWTYPE_HEX);
         }
     }
 
-    adjustPagesStatus();
+    adjusStatus();
 
     return bResult;
 }
 
 void XDynStructsWidget::onAnchorClicked(const QUrl &sLink)
 {
-    qint64 nAddress=sLink.toString().section("&",0,0).toLongLong(0,16);
+    qint64 nAddress=sLink.toString().section("&",0,0).section("0x",1,1).toLongLong(0,16);
     QString sStruct=sLink.toString().section("&",1,1);
 
     ui->lineEditStructsCurrentAddress->setValueOS(nAddress);
@@ -228,7 +257,7 @@ void XDynStructsWidget::on_pushButtonStructsBack_clicked()
         restorePage();
     }
 
-    adjustPagesStatus();
+    adjusStatus();
 }
 
 void XDynStructsWidget::on_pushButtonStructsForward_clicked()
@@ -239,10 +268,10 @@ void XDynStructsWidget::on_pushButtonStructsForward_clicked()
         restorePage();
     }
 
-    adjustPagesStatus();
+    adjusStatus();
 }
 
-void XDynStructsWidget::adjustPagesStatus()
+void XDynStructsWidget::adjusStatus()
 {
     ui->pushButtonStructsBack->setEnabled(g_nPageIndex>0);
     ui->pushButtonStructsForward->setEnabled(g_nPageIndex<(g_listPages.count()-1));
@@ -292,47 +321,115 @@ void XDynStructsWidget::restorePage()
     ui->textBrowserStructs->setHtml(currentPage.sText);
 }
 
-void XDynStructsWidget::showViewer(qint64 nAddress, VT vt)
+void XDynStructsWidget::showViewer(qint64 nAddress, XDynStructsWidget::VIEWTYPE viewType)
 {
     bool bSuccess=false;
 
-    void *pProcess=XProcess::openProcess(g_pStructsEngine->getProcessId());
+    XProcess::MEMORY_REGION memoryRegion=XProcess::getMemoryRegion(g_pStructsEngine->getProcessId(),nAddress);
 
-    if(pProcess)
+    if(memoryRegion.nSize)
     {
-        XProcess::MEMORY_REGION memoryRegion=XProcess::getMemoryRegion(pProcess,nAddress);
+        XProcessDevice processDevice;
 
-        XProcess::closeProcess(pProcess);
-
-        if(memoryRegion.nSize)
+        if(processDevice.openPID(g_pStructsEngine->getProcessId(),memoryRegion.nAddress,memoryRegion.nSize,QIODevice::ReadOnly))
         {
-            XProcessDevice processDevice;
-
-            if(processDevice.openPID(g_pStructsEngine->getProcessId(),memoryRegion.nAddress,memoryRegion.nSize,QIODevice::ReadOnly))
+            if(viewType==VIEWTYPE_HEX)
             {
+                XHexView::OPTIONS hexOptions={};
+                hexOptions.sTitle=QString("%1: %2").arg(QString("PID"),QString::number(g_pStructsEngine->getProcessId()));
+                hexOptions.nStartAddress=memoryRegion.nAddress;
+
                 DialogHexView dialogHexView(this);
 
-                if(vt==VT_HEX)
-                {
-                    XHexView::OPTIONS hexOptions={};
-                    hexOptions.sTitle=QString("%1: %2").arg(QString("PID"),QString::number(g_pStructsEngine->getProcessId()));
-                    hexOptions.nStartAddress=memoryRegion.nAddress;
+                dialogHexView.setData(&processDevice,hexOptions);
+                dialogHexView.setShortcuts(getShortcuts());
 
-                    dialogHexView.setData(&processDevice,hexOptions);
+                dialogHexView.exec();
 
-                    dialogHexView.exec();
-
-                    bSuccess=true;
-
-                    processDevice.close();
-                }
-                // TODO Disasm
+                bSuccess=true;
             }
+            else if(viewType==VIEWTYPE_DISASM)
+            {
+                XMultiDisasmWidget::OPTIONS disasmOptions={};
+                disasmOptions.sTitle=QString("%1: %2").arg(QString("PID"),QString::number(g_pStructsEngine->getProcessId()));
+                disasmOptions.nInitAddress=memoryRegion.nAddress;
+                disasmOptions.fileType=XBinary::FT_REGION;
+
+            #ifdef Q_OS_WIN32
+                disasmOptions.sArch="386";
+            #endif
+            #ifdef Q_OS_WIN64
+                disasmOptions.sArch="AMD64";
+            #endif
+
+                DialogMultiDisasm dialogMultiDisasm(this);
+
+                dialogMultiDisasm.setData(&processDevice,disasmOptions);
+                dialogMultiDisasm.setShortcuts(getShortcuts());
+
+                dialogMultiDisasm.exec();
+
+                bSuccess=true;
+            }
+
+            processDevice.close();
         }
     }
 
     if(!bSuccess)
     {
         QMessageBox::critical(XOptions::getMainWidget(this),tr("Error"),QString("%1: %2").arg(tr("Cannot read memory at address"),XBinary::valueToHexOS(nAddress)));
+    }
+}
+
+void XDynStructsWidget::on_pushButtonStructsHex_clicked()
+{
+    qint64 nAddress=ui->lineEditStructsCurrentAddress->getValue();
+
+    showViewer(nAddress,VIEWTYPE_HEX);
+}
+
+void XDynStructsWidget::on_pushButtonStructsDisasm_clicked()
+{
+    qint64 nAddress=ui->lineEditStructsCurrentAddress->getValue();
+
+    showViewer(nAddress,VIEWTYPE_DISASM);
+}
+
+void XDynStructsWidget::on_pushButtonStructsSave_clicked()
+{
+    QString sFileName=QString("%1.html").arg(tr("Result"));
+
+    sFileName=QFileDialog::getSaveFileName(this,tr("Save"),sFileName,QString("HTML %1 (*.html);;%2 (*)").arg(tr("Files"),tr("All files")));
+
+    if(!sFileName.isEmpty())
+    {
+        XOptions::saveTextBrowserHtml(ui->textBrowserStructs,sFileName);
+    }
+}
+
+void XDynStructsWidget::on_comboBoxStructsCurrent_currentIndexChanged(int nIndex)
+{
+    Q_UNUSED(nIndex)
+
+    QString sName=ui->comboBoxStructsCurrent->currentData().toString();
+
+    XDynStructsEngine::DYNSTRUCT dynStruct=g_pStructsEngine->getDynStructByName(sName);
+
+    ui->pushButtonStructsPrototype->setEnabled(dynStruct.sInfoFile!="");
+}
+
+void XDynStructsWidget::on_pushButtonStructsPrototype_clicked()
+{
+    QString sName=ui->comboBoxStructsCurrent->currentData().toString();
+
+    XDynStructsEngine::DYNSTRUCT dynStruct=g_pStructsEngine->getDynStructByName(sName);
+
+    if(XBinary::isFileExists(dynStruct.sInfoFile))
+    {
+        DialogTextInfo dialogTextInfo(this);
+
+        dialogTextInfo.setFile(dynStruct.sInfoFile);
+        dialogTextInfo.exec();
     }
 }

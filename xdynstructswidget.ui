@@ -101,6 +101,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButtonStructsPrototype">
+       <property name="text">
+        <string>Prototype</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButtonStructsSave">
        <property name="text">
         <string>Save</string>
