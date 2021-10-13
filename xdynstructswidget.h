@@ -65,7 +65,7 @@ private slots:
     void on_pushButtonStructsForward_clicked();
     void adjusStatus();
     bool adjustComboBox(QString sStructName);
-    void restorePage();
+    void restorePage(qint32 nProgressBarValue);
     void showViewer(qint64 nAddress,XDynStructsWidget::VIEWTYPE viewType);
     void on_pushButtonStructsHex_clicked();
     void on_pushButtonStructsDisasm_clicked();

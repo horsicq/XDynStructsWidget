@@ -170,7 +170,7 @@ bool XDynStructsWidget::reload(QString sStructName)
         // TODO pDevice
         if(g_pStructsEngine->getProcessId())
         {
-            restorePage();
+            restorePage(ui->textBrowserStructs->verticalScrollBar()->value());
 
             showViewer(nAddress,VIEWTYPE_HEX);
         }
@@ -254,7 +254,7 @@ void XDynStructsWidget::on_pushButtonStructsBack_clicked()
     if(g_nPageIndex>0)
     {
         g_nPageIndex--;
-        restorePage();
+        restorePage(0);
     }
 
     adjusStatus();
@@ -265,7 +265,7 @@ void XDynStructsWidget::on_pushButtonStructsForward_clicked()
     if(g_nPageIndex<(g_listPages.count()-1))
     {
         g_nPageIndex++;
-        restorePage();
+        restorePage(0);
     }
 
     adjusStatus();
@@ -312,13 +312,14 @@ bool XDynStructsWidget::adjustComboBox(QString sStructName)
     return bResult;
 }
 
-void XDynStructsWidget::restorePage()
+void XDynStructsWidget::restorePage(qint32 nProgressBarValue)
 {
     PAGE currentPage=getCurrentPage();
 
     ui->lineEditStructsCurrentAddress->setValueOS(currentPage.nAddress);
     adjustComboBox(currentPage.sStructName);
     ui->textBrowserStructs->setHtml(currentPage.sText);
+    ui->textBrowserStructs->verticalScrollBar()->setValue(nProgressBarValue);
 }
 
 void XDynStructsWidget::showViewer(qint64 nAddress, XDynStructsWidget::VIEWTYPE viewType)
@@ -338,6 +339,7 @@ void XDynStructsWidget::showViewer(qint64 nAddress, XDynStructsWidget::VIEWTYPE 
                 XHexView::OPTIONS hexOptions={};
                 hexOptions.sTitle=QString("%1: %2").arg(QString("PID"),QString::number(g_pStructsEngine->getProcessId()));
                 hexOptions.nStartAddress=memoryRegion.nAddress;
+                hexOptions.nStartSelectionOffset=nAddress-memoryRegion.nAddress;
 
                 DialogHexView dialogHexView(this);
 
@@ -352,7 +354,8 @@ void XDynStructsWidget::showViewer(qint64 nAddress, XDynStructsWidget::VIEWTYPE 
             {
                 XMultiDisasmWidget::OPTIONS disasmOptions={};
                 disasmOptions.sTitle=QString("%1: %2").arg(QString("PID"),QString::number(g_pStructsEngine->getProcessId()));
-                disasmOptions.nInitAddress=memoryRegion.nAddress;
+                disasmOptions.nStartAddress=memoryRegion.nAddress;
+                disasmOptions.nInitAddress=nAddress;
                 disasmOptions.fileType=XBinary::FT_REGION;
 
             #ifdef Q_OS_WIN32
