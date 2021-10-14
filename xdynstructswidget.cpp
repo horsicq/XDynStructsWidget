@@ -40,6 +40,7 @@ void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine, qint64 nAddre
     g_pStructsEngine=pStructsEngine;
 
     ui->comboBoxStructsCurrent->addItem("","");
+    ui->comboBoxStructsCurrent->addItem(tr("Array"),"array");
 
     QList<XDynStructsEngine::DYNSTRUCT> *pListStructs=pStructsEngine->getStructs();
 
