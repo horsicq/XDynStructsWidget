@@ -1,1 +1,3 @@
 # XDynStructsWidget
+
+Widget for structs
