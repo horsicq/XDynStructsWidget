@@ -49,6 +49,19 @@
       </widget>
      </item>
      <item>
+      <widget class="QComboBox" name="comboBoxStructsType"/>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBoxStructsCount">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>512</number>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButtonStructsReload">
        <property name="text">
         <string>Reload</string>

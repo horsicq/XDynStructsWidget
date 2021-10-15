@@ -39,8 +39,15 @@ void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine, qint64 nAddre
 {
     g_pStructsEngine=pStructsEngine;
 
+    ui->comboBoxStructsCurrent->clear();
     ui->comboBoxStructsCurrent->addItem("","");
     ui->comboBoxStructsCurrent->addItem(tr("Array"),"array");
+
+    ui->comboBoxStructsType->clear();
+    ui->comboBoxStructsType->addItem(tr("Variable"),XDynStructsEngine::STRUCTTYPE_VARIABLE);
+    ui->comboBoxStructsType->addItem(tr("Pointer"),XDynStructsEngine::STRUCTTYPE_POINTER);
+
+    ui->spinBoxStructsCount->setValue(1);
 
     QList<XDynStructsEngine::DYNSTRUCT> *pListStructs=pStructsEngine->getStructs();
 
@@ -53,7 +60,7 @@ void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine, qint64 nAddre
 
     ui->lineEditStructsCurrentAddress->setValueOS(nAddress);
 
-    reload("");
+    reload();
 }
 
 XDynStructsWidget::~XDynStructsWidget()
@@ -61,21 +68,18 @@ XDynStructsWidget::~XDynStructsWidget()
     delete ui;
 }
 
-bool XDynStructsWidget::reload(QString sStructName)
+bool XDynStructsWidget::reload()
 {
     bool bResult=true;
 
     qint64 nAddress=ui->lineEditStructsCurrentAddress->getValue();
+    QString sStructName=ui->comboBoxStructsCurrent->currentData().toString();
+    XDynStructsEngine::STRUCTTYPE structType=(XDynStructsEngine::STRUCTTYPE)(ui->comboBoxStructsType->currentData().toInt());
+    qint32 nCount=ui->spinBoxStructsCount->value();
 
-    bResult=adjustComboBox(sStructName);
+    XDynStructsEngine::INFO info=g_pStructsEngine->getInfo(nAddress,sStructName,structType,nCount);
 
-    XDynStructsEngine::INFO info={};
-
-    if(bResult)
-    {
-        info=g_pStructsEngine->getInfo(nAddress,sStructName);
-        bResult=info.bIsValid;
-    }
+    bResult=info.bIsValid;
 
     if(bResult)
     {
@@ -125,21 +129,24 @@ bool XDynStructsWidget::reload(QString sStructName)
 
             qint32 nValueSize=info.listRecords.at(i).sValue.size();
 
-            if((nValueSize==4)&&(info.listRecords.at(i).sValue!="0x00"))
+            if(info.listRecords.at(i).sValue!="")
             {
-                cellValue.bBold=true;
-            }
-            else if((nValueSize==6)&&(info.listRecords.at(i).sValue!="0x0000"))
-            {
-                cellValue.bBold=true;
-            }
-            else if((nValueSize==10)&&(info.listRecords.at(i).sValue!="0x00000000"))
-            {
-                cellValue.bBold=true;
-            }
-            else if((nValueSize==18)&&(info.listRecords.at(i).sValue!="0x0000000000000000"))
-            {
-                cellValue.bBold=true;
+                if((nValueSize==4)&&(info.listRecords.at(i).sValue!="0x00"))
+                {
+                    cellValue.bBold=true;
+                }
+                else if((nValueSize==6)&&(info.listRecords.at(i).sValue!="0x0000"))
+                {
+                    cellValue.bBold=true;
+                }
+                else if((nValueSize==10)&&(info.listRecords.at(i).sValue!="0x00000000"))
+                {
+                    cellValue.bBold=true;
+                }
+                else if((nValueSize==18)&&(info.listRecords.at(i).sValue!="0x0000000000000000"))
+                {
+                    cellValue.bBold=true;
+                }
             }
 
             cellValue.sText=XHtml::makeLink(info.listRecords.at(i).sValue,info.listRecords.at(i).sValueData);
@@ -162,9 +169,43 @@ bool XDynStructsWidget::reload(QString sStructName)
 
         page.nAddress=nAddress;
         page.sStructName=sStructName;
+        page.structType=structType;
+        page.nCount=nCount;
         page.sText=sHtml;
 
         addPage(page);
+    }
+
+    adjusStatus();
+
+    return bResult;
+}
+
+void XDynStructsWidget::onAnchorClicked(const QUrl &urlLink)
+{
+    QString sLink=urlLink.toString();
+
+    qint64 nAddress=sLink.section("&",0,0).section("0x",1,1).toLongLong(0,16);
+    QString sStructName=sLink.section("&",1,1);
+    XDynStructsEngine::STRUCTTYPE structType=(XDynStructsEngine::STRUCTTYPE)(sLink.section("&",2,2).toInt());
+    qint32 nCount=sLink.section("&",3,3).toInt();
+
+    if(nCount<ui->spinBoxStructsCount->minimum())
+    {
+        nCount=ui->spinBoxStructsCount->minimum();
+    }
+
+    if(nCount>ui->spinBoxStructsCount->maximum())
+    {
+        nCount=ui->spinBoxStructsCount->maximum();
+    }
+
+    ui->lineEditStructsCurrentAddress->setValueOS(nAddress);
+    ui->spinBoxStructsCount->setValue(nCount);
+
+    if(adjustComboBoxName(sStructName)&&adjustComboBoxType(structType))
+    {
+        reload();
     }
     else
     {
@@ -176,26 +217,12 @@ bool XDynStructsWidget::reload(QString sStructName)
             showViewer(nAddress,VIEWTYPE_HEX);
         }
     }
-
-    adjusStatus();
-
-    return bResult;
-}
-
-void XDynStructsWidget::onAnchorClicked(const QUrl &sLink)
-{
-    qint64 nAddress=sLink.toString().section("&",0,0).section("0x",1,1).toLongLong(0,16);
-    QString sStruct=sLink.toString().section("&",1,1);
-
-    ui->lineEditStructsCurrentAddress->setValueOS(nAddress);
-
-    reload(sStruct);
 }
 
 void XDynStructsWidget::on_pushButtonStructsReload_clicked()
 {
     g_bAddPageEnable=false;
-    reload(ui->comboBoxStructsCurrent->currentData().toString());
+    reload();
     g_bAddPageEnable=true;
 
     int nPageCount=g_listPages.count();
@@ -204,6 +231,8 @@ void XDynStructsWidget::on_pushButtonStructsReload_clicked()
     {
         g_listPages[g_nPageIndex].nAddress=ui->lineEditStructsCurrentAddress->getValue();
         g_listPages[g_nPageIndex].sStructName=ui->comboBoxStructsCurrent->currentData().toString();
+        g_listPages[g_nPageIndex].structType=(XDynStructsEngine::STRUCTTYPE)(ui->comboBoxStructsType->currentData().toInt());
+        g_listPages[g_nPageIndex].nCount=ui->spinBoxStructsCount->value();
         g_listPages[g_nPageIndex].sText=ui->textBrowserStructs->toHtml();
     }
 }
@@ -278,19 +307,19 @@ void XDynStructsWidget::adjusStatus()
     ui->pushButtonStructsForward->setEnabled(g_nPageIndex<(g_listPages.count()-1));
 }
 
-bool XDynStructsWidget::adjustComboBox(QString sStructName)
+bool XDynStructsWidget::adjustComboBoxName(QString sName)
 {
     bool bResult=false;
 
     int nNumberOfRecords=ui->comboBoxStructsCurrent->count();
 
-    if(sStructName!="")
+    if(sName!="")
     {
         bResult=false;
 
         for(int i=0;i<nNumberOfRecords;i++)
         {
-            if(ui->comboBoxStructsCurrent->itemData(i).toString()==sStructName)
+            if(ui->comboBoxStructsCurrent->itemData(i).toString()==sName)
             {
                 ui->comboBoxStructsCurrent->setCurrentIndex(i);
 
@@ -313,12 +342,35 @@ bool XDynStructsWidget::adjustComboBox(QString sStructName)
     return bResult;
 }
 
+bool XDynStructsWidget::adjustComboBoxType(XDynStructsEngine::STRUCTTYPE structType)
+{
+    bool bResult=false;
+
+    int nNumberOfRecords=ui->comboBoxStructsType->count();
+
+    for(int i=0;i<nNumberOfRecords;i++)
+    {
+        if((XDynStructsEngine::STRUCTTYPE)(ui->comboBoxStructsType->itemData(i).toInt())==structType)
+        {
+            ui->comboBoxStructsType->setCurrentIndex(i);
+
+            bResult=true;
+
+            break;
+        }
+    }
+
+    return bResult;
+}
+
 void XDynStructsWidget::restorePage(qint32 nProgressBarValue)
 {
     PAGE currentPage=getCurrentPage();
 
     ui->lineEditStructsCurrentAddress->setValueOS(currentPage.nAddress);
-    adjustComboBox(currentPage.sStructName);
+    adjustComboBoxName(currentPage.sStructName);
+    adjustComboBoxType(currentPage.structType);
+    ui->spinBoxStructsCount->setValue(currentPage.nCount);
     ui->textBrowserStructs->setHtml(currentPage.sText);
     ui->textBrowserStructs->verticalScrollBar()->setValue(nProgressBarValue);
 }
@@ -327,6 +379,7 @@ void XDynStructsWidget::showViewer(qint64 nAddress, XDynStructsWidget::VIEWTYPE 
 {
     bool bSuccess=false;
 
+    // TODO Device
     XProcess::MEMORY_REGION memoryRegion=XProcess::getMemoryRegion(g_pStructsEngine->getProcessId(),nAddress);
 
     if(memoryRegion.nSize)

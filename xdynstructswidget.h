@@ -41,6 +41,8 @@ class XDynStructsWidget : public XShortcutsWidget
     {
         qint64 nAddress;
         QString sStructName;
+        XDynStructsEngine::STRUCTTYPE structType;
+        qint32 nCount;
         QString sText;
     };
 
@@ -56,15 +58,16 @@ public:
     ~XDynStructsWidget();
 
 private slots:
-    bool reload(QString sStruct);
-    void onAnchorClicked(const QUrl &sLink);
+    bool reload();
+    void onAnchorClicked(const QUrl &urlLink);
     void on_pushButtonStructsReload_clicked();
     void addPage(XDynStructsWidget::PAGE page);
     XDynStructsWidget::PAGE getCurrentPage();
     void on_pushButtonStructsBack_clicked();
     void on_pushButtonStructsForward_clicked();
     void adjusStatus();
-    bool adjustComboBox(QString sStructName);
+    bool adjustComboBoxName(QString sName);
+    bool adjustComboBoxType(XDynStructsEngine::STRUCTTYPE structType);
     void restorePage(qint32 nProgressBarValue);
     void showViewer(qint64 nAddress,XDynStructsWidget::VIEWTYPE viewType);
     void on_pushButtonStructsHex_clicked();
