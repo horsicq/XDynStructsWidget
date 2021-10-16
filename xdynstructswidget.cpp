@@ -482,11 +482,11 @@ void XDynStructsWidget::on_pushButtonStructsPrototype_clicked()
 
     XDynStructsEngine::DYNSTRUCT dynStruct=g_pStructsEngine->getDynStructByName(sName);
 
-    if(XBinary::isFileExists(dynStruct.sInfoFile))
+    if(XBinary::isFileExists(dynStruct.sInfoFilePrefix+QDir::separator()+dynStruct.sInfoFile)) // TODO Archive
     {
         DialogTextInfo dialogTextInfo(this);
 
-        dialogTextInfo.setFile(dynStruct.sInfoFile);
+        dialogTextInfo.setFile(dynStruct.sInfoFilePrefix+QDir::separator()+dynStruct.sInfoFile);
         dialogTextInfo.exec();
     }
 }
