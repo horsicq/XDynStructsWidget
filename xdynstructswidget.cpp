@@ -482,7 +482,14 @@ void XDynStructsWidget::on_pushButtonStructsPrototype_clicked()
 
     XDynStructsEngine::DYNSTRUCT dynStruct=g_pStructsEngine->getDynStructByName(sName);
 
-    if(XBinary::isFileExists(dynStruct.sInfoFilePrefix+QDir::separator()+dynStruct.sInfoFile)) // TODO Archive
+    if(XArchives::isArchiveRecordPresent(dynStruct.sInfoFilePrefix+".zip",dynStruct.sInfoFile))
+    {
+        DialogTextInfo dialogTextInfo(this);
+
+        dialogTextInfo.setArchive(dynStruct.sInfoFilePrefix+".zip",dynStruct.sInfoFile);
+        dialogTextInfo.exec();
+    }
+    else if(XBinary::isFileExists(dynStruct.sInfoFilePrefix+QDir::separator()+dynStruct.sInfoFile)) // TODO Archive
     {
         DialogTextInfo dialogTextInfo(this);
 
