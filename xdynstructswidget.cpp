@@ -154,6 +154,7 @@ bool XDynStructsWidget::reload()
 
             XHtml::TABLECELL cellComment={};
             cellComment.sText=info.listRecords.at(i).sComment;
+
             listCells.append(cellComment);
 
             xtml.addTableRow(listCells);

@@ -23,7 +23,6 @@
 
 #include <QWidget>
 #include "xdynstructsengine.h"
-#include "xhtml.h"
 #include "dialoghexview.h"
 #include "dialogmultidisasm.h"
 #include "dialogtextinfo.h"
