@@ -381,7 +381,7 @@ void XDynStructsWidget::showViewer(qint64 nAddress, XDynStructsWidget::VIEWTYPE 
     bool bSuccess=false;
 
     // TODO Device
-    XProcess::MEMORY_REGION memoryRegion=XProcess::getMemoryRegion(g_pStructsEngine->getProcessId(),nAddress);
+    XBinary::MEMORY_REGION memoryRegion=XProcess::getMemoryRegion(g_pStructsEngine->getProcessId(),nAddress);
 
     if(memoryRegion.nSize)
     {
@@ -413,6 +413,7 @@ void XDynStructsWidget::showViewer(qint64 nAddress, XDynStructsWidget::VIEWTYPE 
                 disasmOptions.nInitAddress=nAddress;
                 disasmOptions.fileType=XBinary::FT_REGION;
 
+                // TODO
             #ifdef Q_OS_WIN32
                 disasmOptions.sArch="386";
             #endif
