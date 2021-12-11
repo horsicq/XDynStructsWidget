@@ -51,9 +51,9 @@ void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine, qint64 nAddre
 
     QList<XDynStructsEngine::DYNSTRUCT> *pListStructs=pStructsEngine->getStructs();
 
-    int nNumberOfStructs=pListStructs->count();
+    qint32 nNumberOfStructs=pListStructs->count();
 
-    for(int i=0;i<nNumberOfStructs;i++)
+    for(qint32 i=0;i<nNumberOfStructs;i++)
     {
         ui->comboBoxStructsCurrent->addItem(pListStructs->at(i).sName,pListStructs->at(i).sName);
     }
