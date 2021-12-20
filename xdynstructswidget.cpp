@@ -226,7 +226,7 @@ void XDynStructsWidget::on_pushButtonStructsReload_clicked()
     reload();
     g_bAddPageEnable=true;
 
-    int nPageCount=g_listPages.count();
+    qint32 nPageCount=g_listPages.count();
 
     if(nPageCount&&(g_nPageIndex<nPageCount))
     {
