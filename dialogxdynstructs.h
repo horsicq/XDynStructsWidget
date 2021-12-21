@@ -34,6 +34,7 @@ class DialogXDynStructs : public XShortcutsDialog
 
 public:
     explicit DialogXDynStructs(QWidget *pParent=nullptr);
+
     void setData(XDynStructsEngine *pStructEngine, qint64 nAddress);
     void setGlobal(XShortcuts *pShortcuts,XOptions *pXOptions);
     ~DialogXDynStructs();
