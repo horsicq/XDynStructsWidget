@@ -264,7 +264,7 @@ XDynStructsWidget::PAGE XDynStructsWidget::getCurrentPage()
 {
     PAGE result={};
 
-    int nPageCount=g_listPages.count();
+    qint32 nPageCount=g_listPages.count();
 
     if(nPageCount&&(g_nPageIndex<nPageCount))
     {
