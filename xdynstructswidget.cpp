@@ -312,7 +312,7 @@ bool XDynStructsWidget::adjustComboBoxName(QString sName)
 {
     bool bResult=false;
 
-    int nNumberOfRecords=ui->comboBoxStructsCurrent->count();
+    qint32 nNumberOfRecords=ui->comboBoxStructsCurrent->count();
 
     if(sName!="")
     {
