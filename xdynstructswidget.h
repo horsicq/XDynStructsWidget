@@ -53,8 +53,9 @@ class XDynStructsWidget : public XShortcutsWidget
 
 public:
     explicit XDynStructsWidget(QWidget *pParent=nullptr);
-    void setData(XDynStructsEngine *pStructsEngine, qint64 nAddress);
     ~XDynStructsWidget();
+
+    void setData(XDynStructsEngine *pStructsEngine, qint64 nAddress);
 
 private slots:
     bool reload();
