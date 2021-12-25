@@ -22,3 +22,7 @@ SOURCES += \
     XCONFIG += xhtml
     include($$PWD/../Controls/xhtml.pri)
 }
+
+DISTFILES += \
+    $$PWD/LICENSE \
+    $$PWD/README.md
