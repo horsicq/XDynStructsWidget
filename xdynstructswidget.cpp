@@ -318,7 +318,7 @@ bool XDynStructsWidget::adjustComboBoxName(QString sName)
     {
         bResult=false;
 
-        for(int i=0;i<nNumberOfRecords;i++)
+        for(qint32 i=0;i<nNumberOfRecords;i++)
         {
             if(ui->comboBoxStructsCurrent->itemData(i).toString()==sName)
             {
