@@ -349,7 +349,7 @@ bool XDynStructsWidget::adjustComboBoxType(XDynStructsEngine::STRUCTTYPE structT
 
     int nNumberOfRecords=ui->comboBoxStructsType->count();
 
-    for(int i=0;i<nNumberOfRecords;i++)
+    for(qint32 i=0;i<nNumberOfRecords;i++)
     {
         if((XDynStructsEngine::STRUCTTYPE)(ui->comboBoxStructsType->itemData(i).toInt())==structType)
         {
