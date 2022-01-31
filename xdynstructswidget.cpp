@@ -30,7 +30,7 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) :
     g_nPageIndex=0;
     g_bAddPageEnable=true;
 
-//    XOptions::setMonoFont(ui->textBrowserStructs);
+//    XOptions::setMonoFont(ui->textBrowserStructs); // mb TODO
 
     connect(ui->textBrowserStructs,SIGNAL(anchorClicked(QUrl)),this,SLOT(onAnchorClicked(QUrl)));
 }
