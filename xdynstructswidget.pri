@@ -22,7 +22,7 @@ SOURCES += \
     XCONFIG += xhtml
     include($$PWD/../Controls/xhtml.pri)
 }
-
+# TODO cmake
 DISTFILES += \
     $$PWD/LICENSE \
     $$PWD/README.md
