@@ -56,7 +56,7 @@ public:
     explicit XDynStructsWidget(QWidget *pParent=nullptr);
     ~XDynStructsWidget();
 
-    void setData(XDynStructsEngine *pStructsEngine, qint64 nAddress);
+    void setData(XDynStructsEngine *pStructsEngine,qint64 nAddress);
 
 private slots:
     bool reload();
