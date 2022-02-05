@@ -48,7 +48,7 @@ void DialogXDynStructs::setData(XDynStructsEngine *pStructEngine,qint64 nAddress
     setWindowTitle(sTitle);
 }
 
-void DialogXDynStructs::setGlobal(XShortcuts *pShortcuts, XOptions *pXOptions)
+void DialogXDynStructs::setGlobal(XShortcuts *pShortcuts,XOptions *pXOptions)
 {
     ui->widgetStructs->setGlobal(pShortcuts,pXOptions);
 }
