@@ -35,7 +35,7 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) :
     connect(ui->textBrowserStructs,SIGNAL(anchorClicked(QUrl)),this,SLOT(onAnchorClicked(QUrl)));
 }
 
-void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine, qint64 nAddress)
+void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine,qint64 nAddress)
 {
     g_pStructsEngine=pStructsEngine;
 
