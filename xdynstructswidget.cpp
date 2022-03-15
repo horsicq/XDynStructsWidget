@@ -413,7 +413,7 @@ void XDynStructsWidget::showViewer(qint64 nAddress,XDynStructsWidget::VIEWTYPE v
                 disasmOptions.nInitAddress=nAddress;
                 disasmOptions.fileType=XBinary::FT_REGION;
 
-                // TODO
+                // TODO ARM!!!
             #ifdef Q_OS_WIN32
                 disasmOptions.sArch="386";
             #endif
