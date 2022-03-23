@@ -22,10 +22,10 @@
 #define XDYNSTRUCTSWIDGET_H
 
 #include <QWidget>
-#include "xdynstructsengine.h"
 #include "dialoghexview.h"
 #include "dialogmultidisasm.h"
 #include "dialogtextinfo.h"
+#include "xdynstructsengine.h"
 #include "xshortcutswidget.h"
 
 namespace Ui {
