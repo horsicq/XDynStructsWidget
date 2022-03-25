@@ -21,7 +21,6 @@
 #ifndef XDYNSTRUCTSWIDGET_H
 #define XDYNSTRUCTSWIDGET_H
 
-#include <QWidget>
 #include "dialoghexview.h"
 #include "dialogmultidisasm.h"
 #include "dialogtextinfo.h"
