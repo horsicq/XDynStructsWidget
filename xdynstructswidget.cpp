@@ -385,9 +385,9 @@ void XDynStructsWidget::showViewer(qint64 nAddress,XDynStructsWidget::VIEWTYPE v
 
     if(memoryRegion.nSize)
     {
-        XProcessDevice processDevice;
+        XIODevice *pIODevice=g_pStructsEngine->createIODevice(memoryRegion.nAddress,memoryRegion.nSize);
 
-        if(processDevice.openPID(g_pStructsEngine->getProcessId(),memoryRegion.nAddress,memoryRegion.nSize,QIODevice::ReadOnly))
+        if(pIODevice->open(QIODevice::ReadOnly))
         {
             if(viewType==VIEWTYPE_HEX)
             {
@@ -398,7 +398,7 @@ void XDynStructsWidget::showViewer(qint64 nAddress,XDynStructsWidget::VIEWTYPE v
 
                 DialogHexView dialogHexView(this);
 
-                dialogHexView.setData(&processDevice,hexOptions);
+                dialogHexView.setData(pIODevice,hexOptions);
                 dialogHexView.setGlobal(getShortcuts(),getGlobalOptions());
 
                 dialogHexView.exec();
@@ -423,7 +423,7 @@ void XDynStructsWidget::showViewer(qint64 nAddress,XDynStructsWidget::VIEWTYPE v
 
                 DialogMultiDisasm dialogMultiDisasm(this);
 
-                dialogMultiDisasm.setData(&processDevice,disasmOptions);
+                dialogMultiDisasm.setData(pIODevice,disasmOptions);
                 dialogMultiDisasm.setGlobal(getShortcuts(),getGlobalOptions());
 
                 dialogMultiDisasm.exec();
@@ -431,8 +431,10 @@ void XDynStructsWidget::showViewer(qint64 nAddress,XDynStructsWidget::VIEWTYPE v
                 bSuccess=true;
             }
 
-            processDevice.close();
+            pIODevice->close();
         }
+
+        delete pIODevice;
     }
 
     if(!bSuccess)

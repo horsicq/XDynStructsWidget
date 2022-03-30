@@ -46,7 +46,7 @@ class XDynStructsWidget : public XShortcutsWidget
 
     enum VIEWTYPE
     {
-        // TODO more
+        // TODO more !!!
         VIEWTYPE_HEX=0,
         VIEWTYPE_DISASM
     };
