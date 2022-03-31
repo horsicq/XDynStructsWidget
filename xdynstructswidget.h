@@ -69,7 +69,7 @@ private slots:
     bool adjustComboBoxName(QString sName);
     bool adjustComboBoxType(XDynStructsEngine::STRUCTTYPE structType);
     void restorePage(qint32 nProgressBarValue);
-    void showViewer(qint64 nAddress,XDynStructsWidget::VIEWTYPE viewType);
+    void showViewer(quint64 nAddress,XDynStructsWidget::VIEWTYPE viewType);
     void on_pushButtonStructsHex_clicked();
     void on_pushButtonStructsDisasm_clicked();
     void on_pushButtonStructsSave_clicked();

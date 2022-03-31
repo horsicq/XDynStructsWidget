@@ -186,7 +186,7 @@ void XDynStructsWidget::onAnchorClicked(const QUrl &urlLink)
 {
     QString sLink=urlLink.toString();
 
-    qint64 nAddress=sLink.section("&",0,0).section("0x",1,1).toLongLong(0,16);
+    quint64 nAddress=sLink.section("&",0,0).section("0x",1,1).toULongLong(0,16);
     QString sStructName=sLink.section("&",1,1);
     XDynStructsEngine::STRUCTTYPE structType=(XDynStructsEngine::STRUCTTYPE)(sLink.section("&",2,2).toInt());
     qint32 nCount=sLink.section("&",3,3).toInt();
@@ -376,12 +376,23 @@ void XDynStructsWidget::restorePage(qint32 nProgressBarValue)
     ui->textBrowserStructs->verticalScrollBar()->setValue(nProgressBarValue);
 }
 
-void XDynStructsWidget::showViewer(qint64 nAddress,XDynStructsWidget::VIEWTYPE viewType)
+void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE viewType)
 {
     bool bSuccess=false;
 
     // TODO Device
-    XBinary::MEMORY_REGION memoryRegion=XProcess::getMemoryRegion(g_pStructsEngine->getProcessId(),nAddress);
+    XBinary::MEMORY_REGION memoryRegion={};
+
+    if(g_pStructsEngine->getIOMode()==XDynStructsEngine::IOMODE_PROCESS_USER)
+    {
+        memoryRegion=XProcess::getMemoryRegion(g_pStructsEngine->getProcessId(),nAddress);
+    }
+    else if(g_pStructsEngine->getIOMode()==XDynStructsEngine::IOMODE_PROCESS_KERNEL)
+    {
+        // TODO
+        memoryRegion.nAddress=S_ALIGN_DOWN(nAddress,0x1000);
+        memoryRegion.nSize=0x1000;
+    }
 
     if(memoryRegion.nSize)
     {
@@ -445,14 +456,14 @@ void XDynStructsWidget::showViewer(qint64 nAddress,XDynStructsWidget::VIEWTYPE v
 
 void XDynStructsWidget::on_pushButtonStructsHex_clicked()
 {
-    qint64 nAddress=ui->lineEditStructsCurrentAddress->getValue();
+    quint64 nAddress=ui->lineEditStructsCurrentAddress->getValue();
 
     showViewer(nAddress,VIEWTYPE_HEX);
 }
 
 void XDynStructsWidget::on_pushButtonStructsDisasm_clicked()
 {
-    qint64 nAddress=ui->lineEditStructsCurrentAddress->getValue();
+    quint64 nAddress=ui->lineEditStructsCurrentAddress->getValue();
 
     showViewer(nAddress,VIEWTYPE_DISASM);
 }

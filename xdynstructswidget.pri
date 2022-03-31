@@ -3,14 +3,17 @@ DEPENDPATH += $$PWD
 
 FORMS += \
     $$PWD/dialogxdynstructs.ui \
+    $$PWD/xdynstructsoptionswidget.ui \
     $$PWD/xdynstructswidget.ui
 
 HEADERS += \
     $$PWD/dialogxdynstructs.h \
+    $$PWD/xdynstructsoptionswidget.h \
     $$PWD/xdynstructswidget.h
 
 SOURCES += \
     $$PWD/dialogxdynstructs.cpp \
+    $$PWD/xdynstructsoptionswidget.cpp \
     $$PWD/xdynstructswidget.cpp
 
 !contains(XCONFIG, xdynstructsengine) {
