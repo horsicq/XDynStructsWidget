@@ -95,7 +95,7 @@ bool XDynStructsWidget::reload()
 
             XHtml::TABLECELL cellAddress={};
 
-            if(info.listRecords.at(i).nAddress!=-1)
+            if(info.listRecords.at(i).nAddress!=(quint64)-1)
             {
                 cellAddress.sText=XBinary::valueToHex(info.listRecords.at(i).nAddress);
             }
@@ -107,7 +107,7 @@ bool XDynStructsWidget::reload()
 
             XHtml::TABLECELL cellOffset={};
 
-            if(info.listRecords.at(i).nOffset!=-1)
+            if(info.listRecords.at(i).nOffset!=(quint64)-1)
             {
                 cellOffset.sText=XBinary::valueToHex(info.listRecords.at(i).nOffset);
             }
@@ -387,12 +387,14 @@ void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE
     {
         memoryRegion=XProcess::getMemoryRegion(g_pStructsEngine->getProcessId(),nAddress);
     }
+#ifdef Q_OS_WIN
     else if(g_pStructsEngine->getIOMode()==XDynStructsEngine::IOMODE_PROCESS_KERNEL)
     {
         // TODO
         memoryRegion.nAddress=S_ALIGN_DOWN(nAddress,0x1000);
         memoryRegion.nSize=0x1000;
     }
+#endif
 
     if(memoryRegion.nSize)
     {
