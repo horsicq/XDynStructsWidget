@@ -376,7 +376,7 @@ void XDynStructsWidget::restorePage(qint32 nProgressBarValue)
     ui->textBrowserStructs->verticalScrollBar()->setValue(nProgressBarValue);
 }
 
-void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE viewType)
+void XDynStructsWidget::showViewer(quint64 nAddress,XDynStructsWidget::VIEWTYPE viewType)
 {
     bool bSuccess=false;
 
