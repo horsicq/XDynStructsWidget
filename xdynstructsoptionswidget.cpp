@@ -39,17 +39,17 @@ void XDynStructsOptionsWidget::setOptions(XOptions *pOptions)
 {
     g_pOptions=pOptions;
 
-    pOptions->setLineEdit(ui->lineEditDynStructsPath,XOptions::ID_STRUCTSPATH);
+    pOptions->setLineEdit(ui->lineEditDynStructsPath,XOptions::ID_STRUCTS_PATH);
 }
 
 void XDynStructsOptionsWidget::save()
 {
-    g_pOptions->getLineEdit(ui->lineEditDynStructsPath,XOptions::ID_STRUCTSPATH);
+    g_pOptions->getLineEdit(ui->lineEditDynStructsPath,XOptions::ID_STRUCTS_PATH);
 }
 
 void XDynStructsOptionsWidget::setDefaultValues(XOptions *pOptions)
 {
-    pOptions->addID(XOptions::ID_STRUCTSPATH,"$data/structs");
+    pOptions->addID(XOptions::ID_STRUCTS_PATH,"$data/structs");
 }
 
 void XDynStructsOptionsWidget::on_toolButtonDynStructsPath_clicked()
