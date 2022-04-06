@@ -29,6 +29,7 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) :
 
     g_nPageIndex=0;
     g_bAddPageEnable=true;
+    g_pStructsEngine=nullptr;
 
 //    XOptions::setMonoFont(ui->textBrowserStructs); // mb TODO
 
