@@ -32,7 +32,6 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) :
     g_pStructsEngine=nullptr;
 
 //    XOptions::setMonoFont(ui->textBrowserStructs); // mb TODO TODO Check
-
     connect(ui->textBrowserStructs,SIGNAL(anchorClicked(QUrl)),this,SLOT(onAnchorClicked(QUrl)));
 }
 
