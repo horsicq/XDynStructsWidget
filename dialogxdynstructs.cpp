@@ -30,7 +30,7 @@ DialogXDynStructs::DialogXDynStructs(QWidget *pParent) :
     setWindowFlags(Qt::Window);
 }
 
-void DialogXDynStructs::setData(XDynStructsEngine *pStructEngine,qint64 nAddress)
+void DialogXDynStructs::setData(XDynStructsEngine *pStructEngine,quint64 nAddress)
 {
     ui->widgetStructs->setData(pStructEngine,nAddress);
 

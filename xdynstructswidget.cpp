@@ -35,7 +35,7 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) :
     connect(ui->textBrowserStructs,SIGNAL(anchorClicked(QUrl)),this,SLOT(onAnchorClicked(QUrl)));
 }
 
-void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine,qint64 nAddress)
+void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine,quint64 nAddress)
 {
     g_pStructsEngine=pStructsEngine;
 
@@ -381,7 +381,7 @@ void XDynStructsWidget::showViewer(quint64 nAddress,XDynStructsWidget::VIEWTYPE 
     bool bSuccess=false;
 
     // TODO Device
-    XBinary::MEMORY_REGION memoryRegion={};
+    XProcess::MEMORY_REGION memoryRegion={};
 
     if(g_pStructsEngine->getIOMode()==XDynStructsEngine::IOMODE_PROCESS_USER)
     {

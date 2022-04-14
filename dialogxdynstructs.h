@@ -36,7 +36,7 @@ public:
     explicit DialogXDynStructs(QWidget *pParent=nullptr);
     ~DialogXDynStructs();
 
-    void setData(XDynStructsEngine *pStructEngine,qint64 nAddress);
+    void setData(XDynStructsEngine *pStructEngine,quint64 nAddress);
     void setGlobal(XShortcuts *pShortcuts,XOptions *pXOptions);
 
 private slots:
