@@ -385,7 +385,7 @@ void XDynStructsWidget::showViewer(quint64 nAddress,XDynStructsWidget::VIEWTYPE 
 
     if(g_pStructsEngine->getIOMode()==XDynStructsEngine::IOMODE_PROCESS_USER)
     {
-        memoryRegion=XProcess::getMemoryRegion(g_pStructsEngine->getProcessId(),nAddress);
+        memoryRegion=XProcess::getMemoryRegionById(g_pStructsEngine->getProcessId(),nAddress);
     }
 #ifdef Q_OS_WIN
     else if(g_pStructsEngine->getIOMode()==XDynStructsEngine::IOMODE_PROCESS_KERNEL)
