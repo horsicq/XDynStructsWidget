@@ -347,7 +347,7 @@ bool XDynStructsWidget::adjustComboBoxType(XDynStructsEngine::STRUCTTYPE structT
 {
     bool bResult=false;
 
-    int nNumberOfRecords=ui->comboBoxStructsType->count();
+    qint32 nNumberOfRecords=ui->comboBoxStructsType->count();
 
     for(qint32 i=0;i<nNumberOfRecords;i++)
     {
