@@ -210,7 +210,7 @@ void XDynStructsWidget::onAnchorClicked(const QUrl &urlLink)
     }
     else
     {
-        // TODO pDevice
+        // TODO pDevice !!!
         if(g_pStructsEngine->getProcessId())
         {
             restorePage(ui->textBrowserStructs->verticalScrollBar()->value());
