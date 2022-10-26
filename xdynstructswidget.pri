@@ -1,11 +1,6 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
-FORMS += \
-    $$PWD/dialogxdynstructs.ui \
-    $$PWD/xdynstructsoptionswidget.ui \
-    $$PWD/xdynstructswidget.ui
-
 HEADERS += \
     $$PWD/dialogxdynstructs.h \
     $$PWD/xdynstructsoptionswidget.h \
@@ -15,6 +10,11 @@ SOURCES += \
     $$PWD/dialogxdynstructs.cpp \
     $$PWD/xdynstructsoptionswidget.cpp \
     $$PWD/xdynstructswidget.cpp
+
+FORMS += \
+    $$PWD/dialogxdynstructs.ui \
+    $$PWD/xdynstructsoptionswidget.ui \
+    $$PWD/xdynstructswidget.ui
 
 !contains(XCONFIG, xdynstructsengine) {
     XCONFIG += xdynstructsengine
