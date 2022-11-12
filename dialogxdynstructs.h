@@ -28,16 +28,15 @@ namespace Ui {
 class DialogXDynStructs;
 }
 
-class DialogXDynStructs : public XShortcutsDialog
-{
+class DialogXDynStructs : public XShortcutsDialog {
     Q_OBJECT
 
 public:
-    explicit DialogXDynStructs(QWidget *pParent=nullptr);
+    explicit DialogXDynStructs(QWidget *pParent = nullptr);
     ~DialogXDynStructs();
 
-    void setData(XDynStructsEngine *pStructEngine,quint64 nAddress);
-    void setGlobal(XShortcuts *pShortcuts,XOptions *pXOptions);
+    void setData(XDynStructsEngine *pStructEngine, quint64 nAddress);
+    void setGlobal(XShortcuts *pShortcuts, XOptions *pXOptions);
 
 private slots:
     void on_pushButtonClose_clicked();
@@ -46,4 +45,4 @@ private:
     Ui::DialogXDynStructs *ui;
 };
 
-#endif // DIALOGXDYNSTRUCTS_H
+#endif  // DIALOGXDYNSTRUCTS_H

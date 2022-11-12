@@ -22,19 +22,19 @@
 #define XDYNSTRUCTSOPTIONSWIDGET_H
 
 #include <QWidget>
-#include "xoptions.h"
+
 #include "xbinary.h"
+#include "xoptions.h"
 
 namespace Ui {
 class XDynStructsOptionsWidget;
 }
 
-class XDynStructsOptionsWidget : public QWidget
-{
+class XDynStructsOptionsWidget : public QWidget {
     Q_OBJECT
 
 public:
-    explicit XDynStructsOptionsWidget(QWidget *pParent=nullptr);
+    explicit XDynStructsOptionsWidget(QWidget *pParent = nullptr);
     ~XDynStructsOptionsWidget();
 
     void setOptions(XOptions *pOptions);
@@ -50,4 +50,4 @@ private:
     XOptions *g_pOptions;
 };
 
-#endif // XDYNSTRUCTSOPTIONSWIDGET_H
+#endif  // XDYNSTRUCTSOPTIONSWIDGET_H

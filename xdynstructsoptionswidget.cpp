@@ -19,48 +19,40 @@
  * SOFTWARE.
  */
 #include "xdynstructsoptionswidget.h"
+
 #include "ui_xdynstructsoptionswidget.h"
 
-XDynStructsOptionsWidget::XDynStructsOptionsWidget(QWidget *pParent) :
-    QWidget(pParent),
-    ui(new Ui::XDynStructsOptionsWidget)
-{
+XDynStructsOptionsWidget::XDynStructsOptionsWidget(QWidget *pParent) : QWidget(pParent), ui(new Ui::XDynStructsOptionsWidget) {
     ui->setupUi(this);
 
-    g_pOptions=nullptr;
+    g_pOptions = nullptr;
 }
 
-XDynStructsOptionsWidget::~XDynStructsOptionsWidget()
-{
+XDynStructsOptionsWidget::~XDynStructsOptionsWidget() {
     delete ui;
 }
 
-void XDynStructsOptionsWidget::setOptions(XOptions *pOptions)
-{
-    g_pOptions=pOptions;
+void XDynStructsOptionsWidget::setOptions(XOptions *pOptions) {
+    g_pOptions = pOptions;
 
-    pOptions->setLineEdit(ui->lineEditDynStructsPath,XOptions::ID_STRUCTS_PATH);
+    pOptions->setLineEdit(ui->lineEditDynStructsPath, XOptions::ID_STRUCTS_PATH);
 }
 
-void XDynStructsOptionsWidget::save()
-{
-    g_pOptions->getLineEdit(ui->lineEditDynStructsPath,XOptions::ID_STRUCTS_PATH);
+void XDynStructsOptionsWidget::save() {
+    g_pOptions->getLineEdit(ui->lineEditDynStructsPath, XOptions::ID_STRUCTS_PATH);
 }
 
-void XDynStructsOptionsWidget::setDefaultValues(XOptions *pOptions)
-{
-    pOptions->addID(XOptions::ID_STRUCTS_PATH,"$data/structs");
+void XDynStructsOptionsWidget::setDefaultValues(XOptions *pOptions) {
+    pOptions->addID(XOptions::ID_STRUCTS_PATH, "$data/structs");
 }
 
-void XDynStructsOptionsWidget::on_toolButtonDynStructsPath_clicked()
-{
-    QString sText=ui->lineEditDynStructsPath->text();
-    QString sInitDirectory=XBinary::convertPathName(sText);
+void XDynStructsOptionsWidget::on_toolButtonDynStructsPath_clicked() {
+    QString sText = ui->lineEditDynStructsPath->text();
+    QString sInitDirectory = XBinary::convertPathName(sText);
 
-    QString sDirectoryName=QFileDialog::getExistingDirectory(this,tr("Open directory")+QString("..."),sInitDirectory,QFileDialog::ShowDirsOnly);
+    QString sDirectoryName = QFileDialog::getExistingDirectory(this, tr("Open directory") + QString("..."), sInitDirectory, QFileDialog::ShowDirsOnly);
 
-    if(!sDirectoryName.isEmpty())
-    {
+    if (!sDirectoryName.isEmpty()) {
         ui->lineEditDynStructsPath->setText(sDirectoryName);
     }
 }

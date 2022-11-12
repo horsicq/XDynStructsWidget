@@ -19,46 +19,37 @@
  * SOFTWARE.
  */
 #include "dialogxdynstructs.h"
+
 #include "ui_dialogxdynstructs.h"
 
-DialogXDynStructs::DialogXDynStructs(QWidget *pParent) :
-    XShortcutsDialog(pParent),
-    ui(new Ui::DialogXDynStructs)
-{
+DialogXDynStructs::DialogXDynStructs(QWidget *pParent) : XShortcutsDialog(pParent), ui(new Ui::DialogXDynStructs) {
     ui->setupUi(this);
 
     setWindowFlags(Qt::Window);
 }
 
-void DialogXDynStructs::setData(XDynStructsEngine *pStructEngine,quint64 nAddress)
-{
-    ui->widgetStructs->setData(pStructEngine,nAddress);
+void DialogXDynStructs::setData(XDynStructsEngine *pStructEngine, quint64 nAddress) {
+    ui->widgetStructs->setData(pStructEngine, nAddress);
 
     QString sTitle;
 
-    if(pStructEngine->getDevice())
-    {
-        sTitle=XBinary::getDeviceFileName(pStructEngine->getDevice());
-    }
-    else if(pStructEngine->getProcessId())
-    {
-        sTitle=QString("%1: %2").arg(QString("PID"),QString::number(pStructEngine->getProcessId()));
+    if (pStructEngine->getDevice()) {
+        sTitle = XBinary::getDeviceFileName(pStructEngine->getDevice());
+    } else if (pStructEngine->getProcessId()) {
+        sTitle = QString("%1: %2").arg(QString("PID"), QString::number(pStructEngine->getProcessId()));
     }
 
     setWindowTitle(sTitle);
 }
 
-void DialogXDynStructs::setGlobal(XShortcuts *pShortcuts,XOptions *pXOptions)
-{
-    ui->widgetStructs->setGlobal(pShortcuts,pXOptions);
+void DialogXDynStructs::setGlobal(XShortcuts *pShortcuts, XOptions *pXOptions) {
+    ui->widgetStructs->setGlobal(pShortcuts, pXOptions);
 }
 
-DialogXDynStructs::~DialogXDynStructs()
-{
+DialogXDynStructs::~DialogXDynStructs() {
     delete ui;
 }
 
-void DialogXDynStructs::on_pushButtonClose_clicked()
-{
+void DialogXDynStructs::on_pushButtonClose_clicked() {
     this->close();
 }

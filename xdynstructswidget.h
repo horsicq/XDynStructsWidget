@@ -31,12 +31,10 @@ namespace Ui {
 class XDynStructsWidget;
 }
 
-class XDynStructsWidget : public XShortcutsWidget
-{
+class XDynStructsWidget : public XShortcutsWidget {
     Q_OBJECT
 
-    struct PAGE
-    {
+    struct PAGE {
         qint64 nAddress;
         QString sStructName;
         XDynStructsEngine::STRUCTTYPE structType;
@@ -44,19 +42,18 @@ class XDynStructsWidget : public XShortcutsWidget
         QString sText;
     };
 
-    enum VIEWTYPE
-    {
+    enum VIEWTYPE {
         // TODO more !!!
         // TODO Check
-        VIEWTYPE_HEX=0,
+        VIEWTYPE_HEX = 0,
         VIEWTYPE_DISASM
     };
 
 public:
-    explicit XDynStructsWidget(QWidget *pParent=nullptr);
+    explicit XDynStructsWidget(QWidget *pParent = nullptr);
     ~XDynStructsWidget();
 
-    void setData(XDynStructsEngine *pStructsEngine,quint64 nAddress);
+    void setData(XDynStructsEngine *pStructsEngine, quint64 nAddress);
 
 private slots:
     bool reload();
@@ -70,7 +67,7 @@ private slots:
     bool adjustComboBoxName(QString sName);
     bool adjustComboBoxType(XDynStructsEngine::STRUCTTYPE structType);
     void restorePage(qint32 nProgressBarValue);
-    void showViewer(quint64 nAddress,XDynStructsWidget::VIEWTYPE viewType);
+    void showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE viewType);
     void on_pushButtonStructsHex_clicked();
     void on_pushButtonStructsDisasm_clicked();
     void on_pushButtonStructsSave_clicked();
@@ -91,4 +88,4 @@ private:
     XDynStructsEngine *g_pStructsEngine;
 };
 
-#endif // XDYNSTRUCTSWIDGET_H
+#endif  // XDYNSTRUCTSWIDGET_H
