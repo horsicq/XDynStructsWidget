@@ -390,8 +390,7 @@ void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE
     }
 
     if (!bSuccess) {
-        QMessageBox::critical(XOptions::getMainWidget(this), tr("Error"),
-                              QString("%1: %2").arg(tr("Cannot read memory at address"), XBinary::valueToHexOS(nAddress)));
+        QMessageBox::critical(XOptions::getMainWidget(this), tr("Error"), QString("%1: %2").arg(tr("Cannot read memory at address"), XBinary::valueToHexOS(nAddress)));
     }
 }
 
