@@ -22,7 +22,8 @@
 
 #include "ui_xdynstructswidget.h"
 
-XDynStructsWidget::XDynStructsWidget(QWidget *pParent) : XShortcutsWidget(pParent), ui(new Ui::XDynStructsWidget) {
+XDynStructsWidget::XDynStructsWidget(QWidget *pParent) : XShortcutsWidget(pParent), ui(new Ui::XDynStructsWidget)
+{
     ui->setupUi(this);
 
     g_nPageIndex = 0;
@@ -33,7 +34,8 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) : XShortcutsWidget(pParen
     connect(ui->textBrowserStructs, SIGNAL(anchorClicked(QUrl)), this, SLOT(onAnchorClicked(QUrl)));
 }
 
-void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine, quint64 nAddress) {
+void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine, quint64 nAddress)
+{
     g_pStructsEngine = pStructsEngine;
 
     ui->comboBoxStructsCurrent->clear();
@@ -59,11 +61,13 @@ void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine, quint64 nAddr
     reload();
 }
 
-XDynStructsWidget::~XDynStructsWidget() {
+XDynStructsWidget::~XDynStructsWidget()
+{
     delete ui;
 }
 
-bool XDynStructsWidget::reload() {
+bool XDynStructsWidget::reload()
+{
     bool bResult = true;
 
     qint64 nAddress = ui->lineEditStructsCurrentAddress->getValue();
@@ -160,7 +164,8 @@ bool XDynStructsWidget::reload() {
     return bResult;
 }
 
-void XDynStructsWidget::onAnchorClicked(const QUrl &urlLink) {
+void XDynStructsWidget::onAnchorClicked(const QUrl &urlLink)
+{
     QString sLink = urlLink.toString();
 
     quint64 nAddress = sLink.section("&", 0, 0).section("0x", 1, 1).toULongLong(0, 16);
@@ -191,7 +196,8 @@ void XDynStructsWidget::onAnchorClicked(const QUrl &urlLink) {
     }
 }
 
-void XDynStructsWidget::on_pushButtonStructsReload_clicked() {
+void XDynStructsWidget::on_pushButtonStructsReload_clicked()
+{
     g_bAddPageEnable = false;
     reload();
     g_bAddPageEnable = true;
@@ -207,7 +213,8 @@ void XDynStructsWidget::on_pushButtonStructsReload_clicked() {
     }
 }
 
-void XDynStructsWidget::addPage(PAGE page) {
+void XDynStructsWidget::addPage(PAGE page)
+{
     if (g_bAddPageEnable) {
         qint32 nNumberOfPages = g_listPages.count();
 
@@ -226,7 +233,8 @@ void XDynStructsWidget::addPage(PAGE page) {
     }
 }
 
-XDynStructsWidget::PAGE XDynStructsWidget::getCurrentPage() {
+XDynStructsWidget::PAGE XDynStructsWidget::getCurrentPage()
+{
     PAGE result = {};
 
     qint32 nPageCount = g_listPages.count();
@@ -238,12 +246,14 @@ XDynStructsWidget::PAGE XDynStructsWidget::getCurrentPage() {
     return result;
 }
 
-void XDynStructsWidget::registerShortcuts(bool bState) {
+void XDynStructsWidget::registerShortcuts(bool bState)
+{
     Q_UNUSED(bState)
     // TODO
 }
 
-void XDynStructsWidget::on_pushButtonStructsBack_clicked() {
+void XDynStructsWidget::on_pushButtonStructsBack_clicked()
+{
     if (g_nPageIndex > 0) {
         g_nPageIndex--;
         restorePage(0);
@@ -252,7 +262,8 @@ void XDynStructsWidget::on_pushButtonStructsBack_clicked() {
     adjusStatus();
 }
 
-void XDynStructsWidget::on_pushButtonStructsForward_clicked() {
+void XDynStructsWidget::on_pushButtonStructsForward_clicked()
+{
     if (g_nPageIndex < (g_listPages.count() - 1)) {
         g_nPageIndex++;
         restorePage(0);
@@ -261,12 +272,14 @@ void XDynStructsWidget::on_pushButtonStructsForward_clicked() {
     adjusStatus();
 }
 
-void XDynStructsWidget::adjusStatus() {
+void XDynStructsWidget::adjusStatus()
+{
     ui->pushButtonStructsBack->setEnabled(g_nPageIndex > 0);
     ui->pushButtonStructsForward->setEnabled(g_nPageIndex < (g_listPages.count() - 1));
 }
 
-bool XDynStructsWidget::adjustComboBoxName(QString sName) {
+bool XDynStructsWidget::adjustComboBoxName(QString sName)
+{
     bool bResult = false;
 
     qint32 nNumberOfRecords = ui->comboBoxStructsCurrent->count();
@@ -294,7 +307,8 @@ bool XDynStructsWidget::adjustComboBoxName(QString sName) {
     return bResult;
 }
 
-bool XDynStructsWidget::adjustComboBoxType(XDynStructsEngine::STRUCTTYPE structType) {
+bool XDynStructsWidget::adjustComboBoxType(XDynStructsEngine::STRUCTTYPE structType)
+{
     bool bResult = false;
 
     qint32 nNumberOfRecords = ui->comboBoxStructsType->count();
@@ -312,7 +326,8 @@ bool XDynStructsWidget::adjustComboBoxType(XDynStructsEngine::STRUCTTYPE structT
     return bResult;
 }
 
-void XDynStructsWidget::restorePage(qint32 nProgressBarValue) {
+void XDynStructsWidget::restorePage(qint32 nProgressBarValue)
+{
     PAGE currentPage = getCurrentPage();
 
     ui->lineEditStructsCurrentAddress->setValueOS(currentPage.nAddress);
@@ -323,7 +338,8 @@ void XDynStructsWidget::restorePage(qint32 nProgressBarValue) {
     ui->textBrowserStructs->verticalScrollBar()->setValue(nProgressBarValue);
 }
 
-void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE viewType) {
+void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE viewType)
+{
     bool bSuccess = false;
 
     // TODO Device
@@ -394,19 +410,22 @@ void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE
     }
 }
 
-void XDynStructsWidget::on_pushButtonStructsHex_clicked() {
+void XDynStructsWidget::on_pushButtonStructsHex_clicked()
+{
     quint64 nAddress = ui->lineEditStructsCurrentAddress->getValue();
 
     showViewer(nAddress, VIEWTYPE_HEX);
 }
 
-void XDynStructsWidget::on_pushButtonStructsDisasm_clicked() {
+void XDynStructsWidget::on_pushButtonStructsDisasm_clicked()
+{
     quint64 nAddress = ui->lineEditStructsCurrentAddress->getValue();
 
     showViewer(nAddress, VIEWTYPE_DISASM);
 }
 
-void XDynStructsWidget::on_pushButtonStructsSave_clicked() {
+void XDynStructsWidget::on_pushButtonStructsSave_clicked()
+{
     QString sFileName = QString("%1.html").arg(tr("Result"));
 
     sFileName = QFileDialog::getSaveFileName(this, tr("Save"), sFileName, QString("HTML %1 (*.html);;%2 (*)").arg(tr("Files"), tr("All files")));
@@ -416,7 +435,8 @@ void XDynStructsWidget::on_pushButtonStructsSave_clicked() {
     }
 }
 
-void XDynStructsWidget::on_comboBoxStructsCurrent_currentIndexChanged(int nIndex) {
+void XDynStructsWidget::on_comboBoxStructsCurrent_currentIndexChanged(int nIndex)
+{
     Q_UNUSED(nIndex)
 
     QString sName = ui->comboBoxStructsCurrent->currentData().toString();
@@ -426,7 +446,8 @@ void XDynStructsWidget::on_comboBoxStructsCurrent_currentIndexChanged(int nIndex
     ui->pushButtonStructsPrototype->setEnabled(dynStruct.sInfoFile != "");
 }
 
-void XDynStructsWidget::on_pushButtonStructsPrototype_clicked() {
+void XDynStructsWidget::on_pushButtonStructsPrototype_clicked()
+{
     QString sName = ui->comboBoxStructsCurrent->currentData().toString();
 
     XDynStructsEngine::DYNSTRUCT dynStruct = g_pStructsEngine->getDynStructByName(sName);
