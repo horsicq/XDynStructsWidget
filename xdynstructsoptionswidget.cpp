@@ -22,7 +22,8 @@
 
 #include "ui_xdynstructsoptionswidget.h"
 
-XDynStructsOptionsWidget::XDynStructsOptionsWidget(QWidget *pParent) : QWidget(pParent), ui(new Ui::XDynStructsOptionsWidget)
+XDynStructsOptionsWidget::XDynStructsOptionsWidget(QWidget *pParent)
+    : QWidget(pParent), ui(new Ui::XDynStructsOptionsWidget)
 {
     ui->setupUi(this);
 

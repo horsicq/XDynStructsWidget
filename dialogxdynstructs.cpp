@@ -22,7 +22,8 @@
 
 #include "ui_dialogxdynstructs.h"
 
-DialogXDynStructs::DialogXDynStructs(QWidget *pParent) : XShortcutsDialog(pParent), ui(new Ui::DialogXDynStructs)
+DialogXDynStructs::DialogXDynStructs(QWidget *pParent)
+    : XShortcutsDialog(pParent), ui(new Ui::DialogXDynStructs)
 {
     ui->setupUi(this);
 
