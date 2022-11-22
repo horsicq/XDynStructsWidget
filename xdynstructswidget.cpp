@@ -22,8 +22,7 @@
 
 #include "ui_xdynstructswidget.h"
 
-XDynStructsWidget::XDynStructsWidget(QWidget *pParent)
-    : XShortcutsWidget(pParent), ui(new Ui::XDynStructsWidget)
+XDynStructsWidget::XDynStructsWidget(QWidget *pParent) : XShortcutsWidget(pParent), ui(new Ui::XDynStructsWidget)
 {
     ui->setupUi(this);
 
