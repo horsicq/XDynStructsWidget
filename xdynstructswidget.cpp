@@ -346,7 +346,7 @@ void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE
     XProcess::MEMORY_REGION memoryRegion = {};
 
     if (g_pStructsEngine->getIOMode() == XDynStructsEngine::IOMODE_PROCESS_USER) {
-        memoryRegion = XProcess::getMemoryRegionById(g_pStructsEngine->getProcessId(), nAddress);
+        memoryRegion = XProcess::getMemoryRegion_Id(g_pStructsEngine->getProcessId(), nAddress);
     }
 #ifdef Q_OS_WIN
     else if (g_pStructsEngine->getIOMode() == XDynStructsEngine::IOMODE_PROCESS_KERNEL) {
@@ -368,7 +368,7 @@ void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE
 
                 DialogHexView dialogHexView(this);
 
-                dialogHexView.setData(pIODevice, hexOptions);
+                dialogHexView.setData(pIODevice, hexOptions, nullptr); // TODO XInfoDB
                 dialogHexView.setGlobal(getShortcuts(), getGlobalOptions());
 
                 dialogHexView.exec();
@@ -461,7 +461,7 @@ void XDynStructsWidget::on_pushButtonStructsPrototype_clicked()
     {
         DialogTextInfo dialogTextInfo(this);
 
-        dialogTextInfo.setFile(dynStruct.sInfoFilePrefix + QDir::separator() + dynStruct.sInfoFile);
+        dialogTextInfo.setFileName(dynStruct.sInfoFilePrefix + QDir::separator() + dynStruct.sInfoFile);
         dialogTextInfo.exec();
     }
 }
