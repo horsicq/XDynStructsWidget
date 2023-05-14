@@ -368,7 +368,7 @@ void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE
 
                 DialogHexView dialogHexView(this);
 
-                dialogHexView.setData(pIODevice, hexOptions, nullptr); // TODO XInfoDB
+                dialogHexView.setData(pIODevice, hexOptions, nullptr);  // TODO XInfoDB
                 dialogHexView.setGlobal(getShortcuts(), getGlobalOptions());
 
                 dialogHexView.exec();
