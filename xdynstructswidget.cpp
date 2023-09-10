@@ -56,7 +56,7 @@ void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine, quint64 nAddr
         ui->comboBoxStructsCurrent->addItem(pListStructs->at(i).sName, pListStructs->at(i).sName);
     }
 
-    ui->lineEditStructsCurrentAddress->setValueOS(nAddress);
+    ui->lineEditStructsCurrentAddress->setValue32_64(nAddress);
 
     reload();
 }
@@ -181,7 +181,7 @@ void XDynStructsWidget::onAnchorClicked(const QUrl &urlLink)
         nCount = ui->spinBoxStructsCount->maximum();
     }
 
-    ui->lineEditStructsCurrentAddress->setValueOS(nAddress);
+    ui->lineEditStructsCurrentAddress->setValue32_64(nAddress);
     ui->spinBoxStructsCount->setValue(nCount);
 
     if (adjustComboBoxName(sStructName) && adjustComboBoxType(structType)) {
@@ -330,7 +330,7 @@ void XDynStructsWidget::restorePage(qint32 nProgressBarValue)
 {
     PAGE currentPage = getCurrentPage();
 
-    ui->lineEditStructsCurrentAddress->setValueOS(currentPage.nAddress);
+    ui->lineEditStructsCurrentAddress->setValue32_64(currentPage.nAddress);
     adjustComboBoxName(currentPage.sStructName);
     adjustComboBoxType(currentPage.structType);
     ui->spinBoxStructsCount->setValue(currentPage.nCount);
