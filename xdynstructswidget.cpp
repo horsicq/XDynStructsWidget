@@ -70,7 +70,7 @@ bool XDynStructsWidget::reload()
 {
     bool bResult = true;
 
-    qint64 nAddress = ui->lineEditStructsCurrentAddress->getValue();
+    qint64 nAddress = ui->lineEditStructsCurrentAddress->getValue_int64();
     QString sStructName = ui->comboBoxStructsCurrent->currentData().toString();
     XDynStructsEngine::STRUCTTYPE structType = (XDynStructsEngine::STRUCTTYPE)(ui->comboBoxStructsType->currentData().toInt());
     qint32 nCount = ui->spinBoxStructsCount->value();
@@ -205,7 +205,7 @@ void XDynStructsWidget::on_pushButtonStructsReload_clicked()
     qint32 nPageCount = g_listPages.count();
 
     if (nPageCount && (g_nPageIndex < nPageCount)) {
-        g_listPages[g_nPageIndex].nAddress = ui->lineEditStructsCurrentAddress->getValue();
+        g_listPages[g_nPageIndex].nAddress = ui->lineEditStructsCurrentAddress->getValue_int64();
         g_listPages[g_nPageIndex].sStructName = ui->comboBoxStructsCurrent->currentData().toString();
         g_listPages[g_nPageIndex].structType = (XDynStructsEngine::STRUCTTYPE)(ui->comboBoxStructsType->currentData().toInt());
         g_listPages[g_nPageIndex].nCount = ui->spinBoxStructsCount->value();
@@ -412,14 +412,14 @@ void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE
 
 void XDynStructsWidget::on_pushButtonStructsHex_clicked()
 {
-    quint64 nAddress = ui->lineEditStructsCurrentAddress->getValue();
+    quint64 nAddress = ui->lineEditStructsCurrentAddress->getValue_uint64();
 
     showViewer(nAddress, VIEWTYPE_HEX);
 }
 
 void XDynStructsWidget::on_pushButtonStructsDisasm_clicked()
 {
-    quint64 nAddress = ui->lineEditStructsCurrentAddress->getValue();
+    quint64 nAddress = ui->lineEditStructsCurrentAddress->getValue_uint64();
 
     showViewer(nAddress, VIEWTYPE_DISASM);
 }
