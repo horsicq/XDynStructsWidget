@@ -363,12 +363,12 @@ void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE
             if (viewType == VIEWTYPE_HEX) {
                 XHexView::OPTIONS hexOptions = {};
                 hexOptions.sTitle = QString("%1: %2").arg(QString("PID"), QString::number(g_pStructsEngine->getProcessId()));
-                hexOptions.nStartAddress = memoryRegion.nAddress;
+                hexOptions.nStartOffset = memoryRegion.nAddress;
                 hexOptions.nStartSelectionOffset = nAddress - memoryRegion.nAddress;
 
                 DialogHexView dialogHexView(this);
 
-                dialogHexView.setData(pIODevice, hexOptions, nullptr);  // TODO XInfoDB
+                // dialogHexView.setData(pIODevice, hexOptions, nullptr,);  // TODO XInfoDB
                 dialogHexView.setGlobal(getShortcuts(), getGlobalOptions());
 
                 dialogHexView.exec();

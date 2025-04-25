@@ -55,6 +55,10 @@ public:
 
     void setData(XDynStructsEngine *pStructsEngine, quint64 nAddress);
 
+    virtual void adjustView()
+    {
+    }
+
 private slots:
     bool reload();
     void onAnchorClicked(const QUrl &urlLink);
