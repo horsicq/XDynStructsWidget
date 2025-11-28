@@ -47,7 +47,7 @@ private slots:
 
 private:
     Ui::XDynStructsOptionsWidget *ui;
-    XOptions *g_pOptions;
+    XOptions *m_pOptions;
 };
 
 #endif  // XDYNSTRUCTSOPTIONSWIDGET_H

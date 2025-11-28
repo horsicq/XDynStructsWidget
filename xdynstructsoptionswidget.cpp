@@ -26,7 +26,7 @@ XDynStructsOptionsWidget::XDynStructsOptionsWidget(QWidget *pParent) : QWidget(p
 {
     ui->setupUi(this);
 
-    g_pOptions = nullptr;
+    m_pOptions = nullptr;
 }
 
 XDynStructsOptionsWidget::~XDynStructsOptionsWidget()
@@ -36,14 +36,14 @@ XDynStructsOptionsWidget::~XDynStructsOptionsWidget()
 
 void XDynStructsOptionsWidget::setOptions(XOptions *pOptions)
 {
-    g_pOptions = pOptions;
+    m_pOptions = pOptions;
 
     pOptions->setLineEdit(ui->lineEditDynStructsPath, XOptions::ID_STRUCTS_PATH);
 }
 
 void XDynStructsOptionsWidget::save()
 {
-    g_pOptions->getLineEdit(ui->lineEditDynStructsPath, XOptions::ID_STRUCTS_PATH);
+    m_pOptions->getLineEdit(ui->lineEditDynStructsPath, XOptions::ID_STRUCTS_PATH);
 }
 
 void XDynStructsOptionsWidget::setDefaultValues(XOptions *pOptions)

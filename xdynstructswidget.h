@@ -86,10 +86,10 @@ signals:
 
 private:
     Ui::XDynStructsWidget *ui;
-    bool g_bAddPageEnable;
-    QList<PAGE> g_listPages;
-    qint32 g_nPageIndex;
-    XDynStructsEngine *g_pStructsEngine;
+    bool m_bAddPageEnable;
+    QList<PAGE> m_listPages;
+    qint32 m_nPageIndex;
+    XDynStructsEngine *m_pStructsEngine;
 };
 
 #endif  // XDYNSTRUCTSWIDGET_H

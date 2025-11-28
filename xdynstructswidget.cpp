@@ -26,9 +26,9 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) : XShortcutsWidget(pParen
 {
     ui->setupUi(this);
 
-    g_nPageIndex = 0;
-    g_bAddPageEnable = true;
-    g_pStructsEngine = nullptr;
+    m_nPageIndex = 0;
+    m_bAddPageEnable = true;
+    m_pStructsEngine = nullptr;
 
     //    XOptions::setMonoFont(ui->textBrowserStructs); // mb TODO TODO Check
     connect(ui->textBrowserStructs, SIGNAL(anchorClicked(QUrl)), this, SLOT(onAnchorClicked(QUrl)));
@@ -36,7 +36,7 @@ XDynStructsWidget::XDynStructsWidget(QWidget *pParent) : XShortcutsWidget(pParen
 
 void XDynStructsWidget::setData(XDynStructsEngine *pStructsEngine, quint64 nAddress)
 {
-    g_pStructsEngine = pStructsEngine;
+    m_pStructsEngine = pStructsEngine;
 
     ui->comboBoxStructsCurrent->clear();
     ui->comboBoxStructsCurrent->addItem("", "");
@@ -75,7 +75,7 @@ bool XDynStructsWidget::reload()
     XDynStructsEngine::STRUCTTYPE structType = (XDynStructsEngine::STRUCTTYPE)(ui->comboBoxStructsType->currentData().toInt());
     qint32 nCount = ui->spinBoxStructsCount->value();
 
-    XDynStructsEngine::INFO info = g_pStructsEngine->getInfo(nAddress, sStructName, structType, nCount);
+    XDynStructsEngine::INFO info = m_pStructsEngine->getInfo(nAddress, sStructName, structType, nCount);
 
     bResult = info.bIsValid;
 
@@ -188,7 +188,7 @@ void XDynStructsWidget::onAnchorClicked(const QUrl &urlLink)
         reload();
     } else {
         // TODO pDevice !!!
-        if (g_pStructsEngine->getProcessId()) {
+        if (m_pStructsEngine->getProcessId()) {
             restorePage(ui->textBrowserStructs->verticalScrollBar()->value());
 
             showViewer(nAddress, VIEWTYPE_HEX);
@@ -198,38 +198,38 @@ void XDynStructsWidget::onAnchorClicked(const QUrl &urlLink)
 
 void XDynStructsWidget::on_pushButtonStructsReload_clicked()
 {
-    g_bAddPageEnable = false;
+    m_bAddPageEnable = false;
     reload();
-    g_bAddPageEnable = true;
+    m_bAddPageEnable = true;
 
-    qint32 nPageCount = g_listPages.count();
+    qint32 nPageCount = m_listPages.count();
 
-    if (nPageCount && (g_nPageIndex < nPageCount)) {
-        g_listPages[g_nPageIndex].nAddress = ui->lineEditStructsCurrentAddress->getValue_int64();
-        g_listPages[g_nPageIndex].sStructName = ui->comboBoxStructsCurrent->currentData().toString();
-        g_listPages[g_nPageIndex].structType = (XDynStructsEngine::STRUCTTYPE)(ui->comboBoxStructsType->currentData().toInt());
-        g_listPages[g_nPageIndex].nCount = ui->spinBoxStructsCount->value();
-        g_listPages[g_nPageIndex].sText = ui->textBrowserStructs->toHtml();
+    if (nPageCount && (m_nPageIndex < nPageCount)) {
+        m_listPages[m_nPageIndex].nAddress = ui->lineEditStructsCurrentAddress->getValue_int64();
+        m_listPages[m_nPageIndex].sStructName = ui->comboBoxStructsCurrent->currentData().toString();
+        m_listPages[m_nPageIndex].structType = (XDynStructsEngine::STRUCTTYPE)(ui->comboBoxStructsType->currentData().toInt());
+        m_listPages[m_nPageIndex].nCount = ui->spinBoxStructsCount->value();
+        m_listPages[m_nPageIndex].sText = ui->textBrowserStructs->toHtml();
     }
 }
 
 void XDynStructsWidget::addPage(PAGE page)
 {
-    if (g_bAddPageEnable) {
-        qint32 nNumberOfPages = g_listPages.count();
+    if (m_bAddPageEnable) {
+        qint32 nNumberOfPages = m_listPages.count();
 
-        for (qint32 i = nNumberOfPages - 1; i > g_nPageIndex; i--) {
-            g_listPages.removeAt(i);
+        for (qint32 i = nNumberOfPages - 1; i > m_nPageIndex; i--) {
+            m_listPages.removeAt(i);
         }
 
-        g_listPages.append(page);
+        m_listPages.append(page);
 
-        if (g_listPages.count() > 100)  // TODO consts
+        if (m_listPages.count() > 100)  // TODO consts
         {
-            g_listPages.removeFirst();
+            m_listPages.removeFirst();
         }
 
-        g_nPageIndex = g_listPages.count() - 1;
+        m_nPageIndex = m_listPages.count() - 1;
     }
 }
 
@@ -237,10 +237,10 @@ XDynStructsWidget::PAGE XDynStructsWidget::getCurrentPage()
 {
     PAGE result = {};
 
-    qint32 nPageCount = g_listPages.count();
+    qint32 nPageCount = m_listPages.count();
 
-    if (nPageCount && (g_nPageIndex < nPageCount)) {
-        result = g_listPages.at(g_nPageIndex);
+    if (nPageCount && (m_nPageIndex < nPageCount)) {
+        result = m_listPages.at(m_nPageIndex);
     }
 
     return result;
@@ -254,8 +254,8 @@ void XDynStructsWidget::registerShortcuts(bool bState)
 
 void XDynStructsWidget::on_pushButtonStructsBack_clicked()
 {
-    if (g_nPageIndex > 0) {
-        g_nPageIndex--;
+    if (m_nPageIndex > 0) {
+        m_nPageIndex--;
         restorePage(0);
     }
 
@@ -264,8 +264,8 @@ void XDynStructsWidget::on_pushButtonStructsBack_clicked()
 
 void XDynStructsWidget::on_pushButtonStructsForward_clicked()
 {
-    if (g_nPageIndex < (g_listPages.count() - 1)) {
-        g_nPageIndex++;
+    if (m_nPageIndex < (m_listPages.count() - 1)) {
+        m_nPageIndex++;
         restorePage(0);
     }
 
@@ -274,8 +274,8 @@ void XDynStructsWidget::on_pushButtonStructsForward_clicked()
 
 void XDynStructsWidget::adjusStatus()
 {
-    ui->pushButtonStructsBack->setEnabled(g_nPageIndex > 0);
-    ui->pushButtonStructsForward->setEnabled(g_nPageIndex < (g_listPages.count() - 1));
+    ui->pushButtonStructsBack->setEnabled(m_nPageIndex > 0);
+    ui->pushButtonStructsForward->setEnabled(m_nPageIndex < (m_listPages.count() - 1));
 }
 
 bool XDynStructsWidget::adjustComboBoxName(QString sName)
@@ -345,11 +345,11 @@ void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE
     // TODO Device
     XProcess::MEMORY_REGION memoryRegion = {};
 
-    if (g_pStructsEngine->getIOMode() == XDynStructsEngine::IOMODE_PROCESS_USER) {
-        memoryRegion = XProcess::getMemoryRegion_Id(g_pStructsEngine->getProcessId(), nAddress);
+    if (m_pStructsEngine->getIOMode() == XDynStructsEngine::IOMODE_PROCESS_USER) {
+        memoryRegion = XProcess::getMemoryRegion_Id(m_pStructsEngine->getProcessId(), nAddress);
     }
 #ifdef Q_OS_WIN
-    else if (g_pStructsEngine->getIOMode() == XDynStructsEngine::IOMODE_PROCESS_KERNEL) {
+    else if (m_pStructsEngine->getIOMode() == XDynStructsEngine::IOMODE_PROCESS_KERNEL) {
         // TODO
         memoryRegion.nAddress = S_ALIGN_DOWN(nAddress, 0x1000);
         memoryRegion.nSize = 0x1000;
@@ -357,12 +357,12 @@ void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE
 #endif
 
     if (memoryRegion.nSize) {
-        XIODevice *pIODevice = g_pStructsEngine->createIODevice(memoryRegion.nAddress, memoryRegion.nSize);
+        XIODevice *pIODevice = m_pStructsEngine->createIODevice(memoryRegion.nAddress, memoryRegion.nSize);
 
         if (pIODevice->open(QIODevice::ReadOnly)) {
             if (viewType == VIEWTYPE_HEX) {
                 XHexView::OPTIONS hexOptions = {};
-                hexOptions.sTitle = QString("%1: %2").arg(QString("PID"), QString::number(g_pStructsEngine->getProcessId()));
+                hexOptions.sTitle = QString("%1: %2").arg(QString("PID"), QString::number(m_pStructsEngine->getProcessId()));
                 hexOptions.nStartOffset = memoryRegion.nAddress;
                 hexOptions.nStartSelectionOffset = nAddress - memoryRegion.nAddress;
 
@@ -376,7 +376,7 @@ void XDynStructsWidget::showViewer(quint64 nAddress, XDynStructsWidget::VIEWTYPE
                 bSuccess = true;
             } else if (viewType == VIEWTYPE_DISASM) {
                 XMultiDisasmWidget::OPTIONS disasmOptions = {};
-                disasmOptions.sTitle = QString("%1: %2").arg(QString("PID"), QString::number(g_pStructsEngine->getProcessId()));
+                disasmOptions.sTitle = QString("%1: %2").arg(QString("PID"), QString::number(m_pStructsEngine->getProcessId()));
                 disasmOptions.nStartAddress = memoryRegion.nAddress;
                 disasmOptions.nInitAddress = nAddress;
                 disasmOptions.fileType = XBinary::FT_REGION;
@@ -450,7 +450,7 @@ void XDynStructsWidget::on_pushButtonStructsPrototype_clicked()
 {
     QString sName = ui->comboBoxStructsCurrent->currentData().toString();
 
-    XDynStructsEngine::DYNSTRUCT dynStruct = g_pStructsEngine->getDynStructByName(sName);
+    XDynStructsEngine::DYNSTRUCT dynStruct = m_pStructsEngine->getDynStructByName(sName);
 
     if (XArchives::isArchiveRecordPresent(dynStruct.sInfoFilePrefix + ".zip", dynStruct.sInfoFile)) {
         DialogTextInfo dialogTextInfo(this);
